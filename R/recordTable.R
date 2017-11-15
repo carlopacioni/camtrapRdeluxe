@@ -12,7 +12,13 @@ recordTable <- function(inDir,
                         metadataHierarchyDelimitor = "|",
                         metadataSpeciesTag,
                         additionalMetadataTags,
-                        removeDuplicateRecords = TRUE
+                        removeDuplicateRecords = TRUE,
+                        speciesPosition = NULL,
+                        cameraIDposition = NULL,
+                        directoryInfoPositions,
+                        directoryInfoNames,
+                        countsName,
+                        ncores
 )
 {
 
@@ -112,18 +118,16 @@ recordTable <- function(inDir,
   # find image directories
   dirs <- list.dirs(inDir, full.names = TRUE, recursive = FALSE)
   dirs_short <- list.dirs(inDir, full.names = FALSE, recursive = FALSE)
-  record.table <- data.frame(stringsAsFactors = FALSE)
 
-   # create command line
+  record.table.list <- vector("list", length = length(dirs))
 
-      if(hasArg(additionalMetadataTags)){
-        command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -EXIF:DateTimeOriginal -HierarchicalSubject', paste(" -",additionalMetadataTags,  collapse = "", sep = ""), ' -ext JPG "', dirs, '"', sep = "")
-        colnames.tmp <- c("Directory", "FileName", "DateTimeOriginal", "HierarchicalSubject", additionalMetadataTags)
-      } else {
-        command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -EXIF:DateTimeOriginal -HierarchicalSubject -ext JPG "',dirs, '"', sep = "")
-        colnames.tmp <- c("Directory", "FileName", "DateTimeOriginal", "HierarchicalSubject")
-      }
-
+  if(hasArg(additionalMetadataTags)){
+    command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -EXIF:DateTimeOriginal -HierarchicalSubject', paste(" -",additionalMetadataTags,  collapse = "", sep = ""), ' -ext JPG "', dirs, '"', sep = "")
+    colnames.tmp <- c("Directory", "FileName", "DateTimeOriginal", "HierarchicalSubject", additionalMetadataTags)
+  } else {
+    command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -EXIF:DateTimeOriginal -HierarchicalSubject -ext JPG "',dirs, '"', sep = "")
+    colnames.tmp <- c("Directory", "FileName", "DateTimeOriginal", "HierarchicalSubject")
+  }
 
   for(i in 1:length(dirs)){   # loop through station directories
 
@@ -143,8 +147,8 @@ recordTable <- function(inDir,
       metadata.tmp <- checkDateTimeOriginal (intable    = metadata.tmp,
                                              dirs_short = dirs_short,
                                              i          = i)
-      if(is.null(metadata.tmp)) next          
-      
+      if(is.null(metadata.tmp)) next
+
       # now split HierarchicalSubject tags and add as columns to table
       metadata.tmp <- addMetadataAsColumns (intable                    = metadata.tmp,
                                             metadata.tagname           = metadata.tagname,
@@ -159,7 +163,8 @@ recordTable <- function(inDir,
                                        speciesCol             = speciesCol,
                                        dirs_short             = dirs_short,
                                        i_tmp                  = i,
-                                       multiple_tag_separator = multiple_tag_separator
+                                       multiple_tag_separator = multiple_tag_separator,
+                                       speciesPosition = speciesPosition
       )
 
       # if no tagged images in current station, go to next one
@@ -175,17 +180,16 @@ recordTable <- function(inDir,
       arg.list0 <- list(intable = metadata.tmp, dirs_short = dirs_short, stationCol = stationCol, hasStationFolders = TRUE, cameraCol = cameraCol, i = i, IDfrom = IDfrom)  # assumes station directories
 
       if(!hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, arg.list0)
-      if( hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, c(arg.list0, cameraID = cameraID))
+      if( hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, c(arg.list0, cameraID = cameraID,
+                                                                          cameraIDposition=cameraIDposition))
 
       # remove species in argument "excluded"
-      if(hasArg (exclude)){
         if(any(tolower(metadata.tmp[,speciesCol]) %in% tolower(exclude))) {  # if there is anything to remove
           metadata.tmp <- metadata.tmp[-which(tolower(metadata.tmp[,speciesCol]) %in% tolower(exclude)),]
         }
-      }
 
       if(nrow(metadata.tmp) >= 1){   # if anything left after excluding species, do
-    
+
         # convert character vector extracted from images to time object and format for outfilename
         metadata.tmp$DateTimeOriginal <- as.POSIXct(strptime(x = metadata.tmp$DateTimeOriginal, format = "%Y:%m:%d %H:%M:%S", tz = timeZone))
 
@@ -206,73 +210,101 @@ recordTable <- function(inDir,
                                                   speciesCol             = speciesCol,
                                                   cameraCol              = cameraCol)
 
+        # extact info from path if relevant
+        if(hasArg(directoryInfoPositions))  {
+          dirPath <- parseDir(metadata.tmp2, directoryInfoPositions = directoryInfoPositions)
+          names(dirPath) <- directoryInfoNames
+          metadata.tmp2 <- cbind(metadata.tmp2, dirPath)
+        }
+
+        ################ TO-DO ###################
+        # needs to have counts from metadata already if present before to go to the next
+        if(hasArg(countsName))  {
+        metadata.tmp2[, countsName] <- as.numeric(metadata.tmp2[, countsName])
+        }
+
+
 
         # assess independence between records and calculate time differences
-        d1 <- assessTemporalIndependence (intable             = metadata.tmp2,
+        record.table.list[[i]] <- assessTemporalIndependence(intable= metadata.tmp2,
                                           deltaTimeComparedTo = deltaTimeComparedTo,
                                           camerasIndependent  = camerasIndependent,
                                           columnOfInterest    = speciesCol,
                                           cameraCol           = cameraCol,
                                           minDeltaTime        = minDeltaTime,
-                                          stationCol          = stationCol)
+                                          stationCol          = stationCol,
+                                          countsName          = countsName)
 
+
+        ################ TO-DO ###################
+        # delete if it works
+
+        # d1, d2 and record.table steps can be done all at once with rbindlist,
+        # only once, outside the loop
 
       # add potential new columns to global record.table
-        d2 <- addNewColumnsToGlobalTable (intable      = d1,
-                                          i            = i,
-                                          record.table = record.table)
+      #  d2 <- addNewColumnsToGlobalTable (intable      = d1,
+      #                                    i            = i,
+      #                                    record.table = record.table)
+
 
 
       # append table of station i's images metadata to global record table
-        record.table <- rbind(d2[[2]], d2[[1]])
+      #  record.table <- rbind(d2[[2]], d2[[1]])
 
-        suppressWarnings(rm(d1, d2))
+
+      #  suppressWarnings(rm(d1, d2))
       }  # end      if(nrow(metadata.tmp) >= 1){} else {...}   # i.e. not all species were excluded
     }    # end      if(nrow(metadata.tmp) == 0){} else {...}   # i.e. directory i contained images
   }      # end      for(i in 1:length(dirs)){   # loop through station directories
 
+  record.table <- rbindlist(record.table.list, use.names=TRUE, fill=TRUE)
   if(nrow(record.table) == 0){
     stop(paste("something went wrong. I looked through all those", length(dirs)  ,"folders and now your table is empty. Did you exclude too many species? Or were date/time information not readable?"), call. = FALSE)
   }
 
   # rearrange table, add date and time as separate columns. add additional column names as needed.
 
-  record.table2  <-  data.frame(record.table[,c(stationCol, speciesCol, "DateTimeOriginal")],
-                                Date = as.Date (record.table$DateTimeOriginal, format = "%Y/%M/%d", tz = timeZone),
-                                Time = strftime(record.table$DateTimeOriginal, format = "%H:%M:%S", tz = timeZone),
-                                record.table[,c("delta.time.secs", "delta.time.mins", "delta.time.hours", "delta.time.days",
-                                                "Directory", "FileName")])
+  #record.table2  <-  data.frame(record.table[,c(stationCol, speciesCol, "DateTimeOriginal")],
+   #                             Date = as.Date (record.table$DateTimeOriginal, format = "%Y/%M/%d", tz = timeZone),
+   #                             Time = strftime(record.table$DateTimeOriginal, format = "%H:%M:%S", tz = timeZone),
+   #                            record.table[,c("delta.time.secs", "delta.time.mins", "delta.time.hours", "delta.time.days",
+   #                                             "Directory", "FileName")])
+  record.table[, Date := as.Date(DateTimeOriginal, format = "%Y/%M/%d", tz = timeZone)]
+  record.table[, Time := strftime(DateTimeOriginal, format = "%H:%M:%S", tz = timeZone)]
 
-  metadata_columns <- which(colnames(record.table) %in% colnames(record.table2) == FALSE)
+  # metadata_columns <- which(colnames(record.table) %in% colnames(record.table2) == FALSE)
 
   # add metadata columns
-  if(length(metadata_columns) >= 1){
-    record.table3 <- cbind(record.table2, record.table[,metadata_columns])
-    colnames(record.table3)[(ncol(record.table2) + 1) : ncol(record.table3)] <- colnames(record.table)[metadata_columns]
-  } else {record.table3 <- record.table2}
+  #if(length(metadata_columns) >= 1){
+  #  record.table3 <- cbind(record.table2, record.table[,metadata_columns])
+  #  colnames(record.table3)[(ncol(record.table2) + 1) : ncol(record.table3)] <- colnames(record.table)[metadata_columns]
+  #} else {record.table3 <- record.table2}
 
 
   # add camera column (if present)
-  if(hasArg(cameraID)){
-    record.table3 <- data.frame(record.table3[,stationCol],
-                                record.table[,cameraCol],
-                                record.table3[,-which(colnames(record.table3) %in% c(stationCol, cameraCol))])
-    colnames(record.table3)[1] <- stationCol
-    colnames(record.table3)[2] <- cameraCol
-  }
+  #if(hasArg(cameraID)){
+   # record.table3 <- data.frame(record.table3[,stationCol],
+   #                             record.table[,cameraCol],
+   #                             record.table3[,-which(colnames(record.table3) %in% c(stationCol, cameraCol))])
+   # colnames(record.table3)[1] <- stationCol
+   # colnames(record.table3)[2] <- cameraCol
+  #}
 
   #
-  rownames(record.table3) <- NULL
+  #rownames(record.table3) <- NULL
 
   # compute delta time in hours and days
-  record.table3$delta.time.secs  <- round(record.table3$delta.time.secs,       digits = 0)
-  record.table3$delta.time.mins  <- round(record.table3$delta.time.secs  / 60, digits = 0)
-  record.table3$delta.time.hours <- round(record.table3$delta.time.mins  / 60, digits = 1)
-  record.table3$delta.time.days  <- round(record.table3$delta.time.hours / 24, digits = 1)
+  record.table[, delta.time.secs := round(delta.time.secs, digits = 0)]
+  record.table[, delta.time.mins := round(delta.time.secs / 60, digits = 0)]
+  record.table[, delta.time.hours := round(delta.time.mins  / 60, digits = 1)]
+  record.table[, delta.time.days  := round(delta.time.hours / 24, digits = 1)]
+  record.table[, independent := NULL]
+  record.table[, rn := NULL]
 
   # warning if additionalMetadataTags were not found
   if(hasArg(additionalMetadataTags)){
-    whichadditionalMetadataTagsFound <- which(gsub(additionalMetadataTags, pattern = ":", replacement = ".") %in% colnames(record.table3))   # replace : in additionalMetadataTags (if specifying tag groups) with . as found in column names
+    whichadditionalMetadataTagsFound <- which(gsub(additionalMetadataTags, pattern = ":", replacement = ".") %in% colnames(record.table))   # replace : in additionalMetadataTags (if specifying tag groups) with . as found in column names
     if(length(whichadditionalMetadataTagsFound) < length(additionalMetadataTags)){
       if(length(whichadditionalMetadataTagsFound) == 0) {  # if none of the additionalMetadataTags was found
         warning(paste("metadata tag(s)  not found in image metadata:  ", paste(additionalMetadataTags, collapse = ", ")), call. = FALSE)
@@ -283,17 +315,33 @@ recordTable <- function(inDir,
   }
 
   # remove "independent" column
-  cols_to_remove <- which(colnames(record.table3) %in% c("independent"))
-  if(length(cols_to_remove) >= 1){
-    record.table3 <- record.table3[,-cols_to_remove]
-  }
+  #cols_to_remove <- which(colnames(record.table3) %in% c("independent"))
+  #if(length(cols_to_remove) >= 1){
+  #  record.table3 <- record.table3[,-cols_to_remove]
+  #}
+
+  # set columns order
+  new.order <- c(stationCol, if(hasArg(cameraID)) cameraCol, speciesCol,
+                 "Directory", "FileName", "DateTimeOriginal", "Date", "Time", "delta.time.secs",
+                 "delta.time.mins", "delta.time.hours", "delta.time.days",
+                 if(hasArg(countsName)) countsName,
+                 if(hasArg(additionalMetadataTags)) "HierarchicalSubject")
+  metadata.cols <- names(record.table)[-which(names(record.table) %in% new.order)]
+
+  setcolorder(record.table,
+              if(hasArg(additionalMetadataTags)) {
+                c(head(new.order, -1), metadata.cols, "HierarchicalSubject")
+              } else {
+                new.order
+              })
+
   # make column "HierarchicalSubject" the last column
-  col_to_move <- which(colnames(record.table3) %in% metadata.tagname)
-  if(length(col_to_move) >= 1){
-     record.table3 <- cbind(record.table3, record.table3[,col_to_move])
-	  record.table3 <- record.table3[,-col_to_move]
-    colnames(record.table3)[ncol(record.table3)] <- metadata.tagname
-  }
+  #col_to_move <- which(colnames(record.table3) %in% metadata.tagname)
+  #if(length(col_to_move) >= 1){
+  #   record.table3 <- cbind(record.table3, record.table3[,col_to_move])
+	#  record.table3 <- record.table3[,-col_to_move]
+  #  colnames(record.table3)[ncol(record.table3)] <- metadata.tagname
+  #}
 
   # save table
   if(writecsv == TRUE){
@@ -303,7 +351,7 @@ recordTable <- function(inDir,
     } else {
       setwd(outDir)
     }
-  write.csv(record.table3, file = outtable_filename)
+  write.csv(record.table, file = outtable_filename)
   }
-  return(record.table3)
+  return(record.table)
 }

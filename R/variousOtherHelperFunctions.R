@@ -73,6 +73,11 @@ runExiftool <- function(command.tmp,
   return(metadata.tmp)
 }
 
+runExiftool.par <- function(i, command.tmp, colnames.tmp) {
+  metadata.tmp <- runExiftool(command.tmp=command.tmp[i], colnames.tmp=colnames.tmp)
+  return(metadata.tmp)
+}
+
 
 addMetadataAsColumns <- function(intable,
                                  metadata.tagname,
@@ -124,8 +129,9 @@ addMetadataAsColumns <- function(intable,
   #colnames(intable) <- gsub(pattern = "[[:blank:]]", replacement = "", x = colnames(intable))
   #colnames(intable) <- gsub(pattern = "[[:punct:]]", replacement = "", x = colnames(intable))
 
+  # REMOVED THE FOLLOWING BECAUSE INTERFERES WITH COUNT FUNCTION, NOT SURE WHY WE NEED THIS, BUT LEFT IN CASE WE HAVE TO REINSTATE
   # rename metadata columns with prefix "metadata_"
-  colnames(intable)[which_cols_to_rename] <- paste("metadata_", colnames(intable)[which_cols_to_rename], sep = "")
+  # colnames(intable)[which_cols_to_rename] <- paste("metadata_", colnames(intable)[which_cols_to_rename], sep = "")
 
   return(intable)
 }
@@ -136,6 +142,7 @@ assignSpeciesID <- function(intable,
                             IDfrom,
                             metadataSpeciesTag,
                             speciesCol,
+                            speciesPosition=NULL,
                             dirs_short,
                             i_tmp,
                             multiple_tag_separator)
@@ -145,7 +152,13 @@ assignSpeciesID <- function(intable,
 
 
   if(IDfrom == "directory"){
-    intable[,speciesCol] <-  sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), FUN = function(X){X[length(X)]})
+    intable[,speciesCol] <-  sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), 
+                                    FUN = function(X){if(is.null(speciesPosition)) {
+                                                            X[length(X)]
+                                                          } else {
+                                                            X[speciesPosition]
+                                                          }
+                                      })
     return(intable)
   } else {
     if(hasArg(metadataSpeciesTag)){
@@ -206,7 +219,8 @@ addStationCameraID <- function(intable,
                                cameraID,
                                hasStationFolders,
                                i,
-                               IDfrom)
+                               IDfrom,
+                               cameraIDposition=NULL)
 {
 
   file.sep <- .Platform$file.sep
@@ -241,7 +255,14 @@ addStationCameraID <- function(intable,
     if(cameraID == "directory"){            # this can only happen in recordTable. Not in recordTableIndividual
       if(IDfrom == "directory"){             # assumes directory structure: Station/Camera/Species
         intable <- cbind(intable,
-                         sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), FUN = function(X){X[length(X) - 1]}))  
+                         sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), 
+                                FUN = function(X){
+                                          if(is.null(cameraIDposition)) {
+                                            X[length(X) - 1]
+                                          } else {
+                                            X[cameraIDposition]
+                                          }
+                                  }))  
         } else {                                    # assumes directory structure: Station/Camera
         intable <- cbind(intable,
                          sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), FUN = function(X){X[length(X)]}))  
@@ -276,13 +297,18 @@ checkDateTimeOriginal <- function (intable, dirs_short, i){
   removeDuplicatesOfRecords <- function(metadata.tmp, removeDuplicateRecords, camerasIndependent, stationCol, speciesCol, cameraCol){
           if(isTRUE(removeDuplicateRecords)){
             if(isTRUE(camerasIndependent)){
-              remove.tmp <- which(duplicated(metadata.tmp[,c("DateTimeOriginal", stationCol, speciesCol, cameraCol)]))
+              remove.tmp <- which(
+                duplicated(metadata.tmp[, c("DateTimeOriginal", stationCol, 
+                                           speciesCol, cameraCol, 
+                                           if(hasArg(countsName)) countsName)]))
               if(length(remove.tmp >= 1)){
                 metadata.tmp <- metadata.tmp[-remove.tmp,]
                 message(paste(unique(metadata.tmp[,stationCol]), collapse = ", "), ": removed ", length(remove.tmp), " duplicate records")
               }
             } else {
-              remove.tmp <- which(duplicated(metadata.tmp[,c("DateTimeOriginal", stationCol, speciesCol)]))
+              remove.tmp <- which(
+                duplicated(metadata.tmp[, c("DateTimeOriginal", stationCol, speciesCol, 
+                                            if(hasArg(countsName)) countsName)]))
               if(length(remove.tmp >= 1)) {
                 metadata.tmp <- metadata.tmp[-remove.tmp,]
                 message(paste(unique(metadata.tmp[,stationCol]), collapse = ", "), ": removed ", length(remove.tmp), " duplicate records")
@@ -292,116 +318,6 @@ checkDateTimeOriginal <- function (intable, dirs_short, i){
           return(metadata.tmp)
         }
 
-
-#### assess temporal independence between records
-
-assessTemporalIndependence <- function(intable,
-                                       deltaTimeComparedTo,
-                                       columnOfInterest,     # species/individual column
-                                       cameraCol,
-                                       camerasIndependent,
-                                       stationCol,
-                                       minDeltaTime)
-{
-# check if all Exif DateTimeOriginal tags were read correctly
-  if(any(is.na(intable$DateTimeOriginal))){
-    which.tmp <- which(is.na(intable$DateTimeOriginal))
-    if(length(which.tmp) == nrow(intable)) stop("Could not read any Exif DateTimeOriginal tag at station: ", paste(unique(intable[which.tmp, stationCol])), " Consider checking for corrupted Exif metadata.")
-    warning(paste("Could not read Exif DateTimeOriginal tag of", length(which.tmp),"image(s) at station", paste(unique(intable[which.tmp, stationCol]), collapse = ", "), ". Will omit them. Consider checking for corrupted Exif metadata. \n",
-      paste(file.path(intable[which.tmp, "Directory"],
-                      intable[which.tmp, "FileName"]), collapse = "\n")), call. = FALSE, immediate. = TRUE)
-    intable <- intable[-which.tmp ,]
-    rm(which.tmp)
-  }
-
-   # prepare to add time difference between observations columns
-        intable <- data.frame(intable,
-                              delta.time.secs  = NA,
-                              delta.time.mins  = NA,
-                              delta.time.hours = NA,
-                              delta.time.days  = NA)
-
-   # introduce column specifying independence of records
-        if(minDeltaTime == 0) {
-          intable$independent <- TRUE    # all independent if no temporal filtering
-        } else {
-          intable$independent <- NA
-        }
-
-
-  for(xy in 1:nrow(intable)){     # for every record
-
-    # set independent = TRUE if it is the 1st/only  record of a species / individual
-
-    if(camerasIndependent == TRUE){
-      if(intable$DateTimeOriginal[xy]  == min(intable$DateTimeOriginal[which(intable[, columnOfInterest] == intable[xy, columnOfInterest] &
-                                                                             intable[, stationCol]       == intable[xy, stationCol] &
-                                                                             intable[, cameraCol]        == intable[xy, cameraCol]) ])){    # cameras at same station assessed independently
-        intable$independent[xy]       <- TRUE
-        intable$delta.time.secs[xy]   <- 0
-      }
-    } else {
-      if(intable$DateTimeOriginal[xy]  == min(intable$DateTimeOriginal[which(intable[, columnOfInterest] == intable[xy, columnOfInterest] &
-                                                                             intable[, stationCol]       == intable[xy, stationCol]) ])){
-        intable$independent[xy]       <- TRUE
-        intable$delta.time.secs[xy]   <- 0
-      }
-    }
-
-    if(is.na(intable$delta.time.secs[xy])) {   # if not the 1st/only record, calculate time difference to previous records of same species at this station
-
-      if(deltaTimeComparedTo == "lastIndependentRecord"){
-
-        if(camerasIndependent == TRUE){
-          which_time2 <- which(intable[, columnOfInterest]       == intable[xy, columnOfInterest] &    # same species/individual
-                              intable[, stationCol]              == intable[xy, stationCol] &          # at same station
-                              intable[, cameraCol]               == intable[xy, cameraCol] &           # at same camera
-                              intable$independent                == TRUE &                             # independent (first or only record of a species at a station)
-                              intable$DateTimeOriginal           <  intable$DateTimeOriginal[xy])      # earlier than record xy
-        } else {
-          which_time2 <- which(intable[, columnOfInterest]       == intable[xy, columnOfInterest] &
-                               intable[, stationCol]             == intable[xy, stationCol] &
-                               intable$independent               == TRUE &
-                               intable$DateTimeOriginal          <  intable$DateTimeOriginal[xy])
-        }
-      }  else {
-        if(camerasIndependent  == TRUE){
-          which_time2 <- which(intable[, columnOfInterest]       == intable[xy, columnOfInterest] &
-                               intable[, stationCol]             == intable[xy, stationCol] &
-                               intable[, cameraCol]              == intable[xy, cameraCol] &
-                               intable$DateTimeOriginal          <  intable$DateTimeOriginal[xy])
-        } else {
-          which_time2 <- which(intable[, columnOfInterest]       == intable[xy, columnOfInterest] &
-                               intable[, stationCol]             == intable[xy, stationCol] &
-                               intable$DateTimeOriginal          <  intable$DateTimeOriginal[xy])
-        }
-      }
-
-      #intable$DateTimeOriginal[which_time2] + (minDeltaTime * 60) < intable$DateTimeOriginal[xy]
-
-      # time difference to last (independent) record
-      diff_tmp <- min(na.omit(difftime(time1 = intable$DateTimeOriginal[xy],            # delta time to last independent record
-                                       time2 = intable$DateTimeOriginal[which_time2],
-                                       units = "secs")))
-
-      # save delta time in seconds
-      intable$delta.time.secs[xy] <-  diff_tmp
-      if(intable$delta.time.secs[xy] >= (minDeltaTime * 60) | intable$delta.time.secs[xy] == 0){
-          intable$independent[xy] <- TRUE
-        } else {
-          intable$independent[xy] <- FALSE
-        }
-
-    }   # end   if(intable$DateTimeOriginal[xy] == min(...)} else {...}
-  }     # end for(xy in 1:nrow(intable))
-
-
-  # keep only independent records
-  outtable <- intable[intable$delta.time.secs >= (minDeltaTime * 60) |
-                      intable$delta.time.secs == 0,]
-
-  return(outtable)
-}
 
 
 # add potential new columns to global record.table
@@ -1010,4 +926,153 @@ makeSurveyZip <- function(output,
   # remove temporary directory
   #unlink(dir.zip, recursive = TRUE)
 
+}
+
+splitDir = function(x, directoryInfoPosition) {
+  tmp <- unlist(strsplit(x, split = "/", fixed = TRUE))
+  return(tmp[directoryInfoPosition])
+}
+
+parseDir <- function(intable, directoryInfoPositions) {
+  return(as.data.frame(
+    t(data.frame(lapply(intable$Directory, splitDir, directoryInfoPositions))))
+  )
+}
+
+# CP version
+assessTemporalIndependence <- function(intable,
+                                       deltaTimeComparedTo,
+                                       columnOfInterest,     # species/individual column
+                                       cameraCol,
+                                       camerasIndependent,
+                                       stationCol,
+                                       minDeltaTime,
+                                       countsName) {
+  
+  ############################ Helper function #################################
+  extact_sel_groups <- function(i, sel.groups) return(as.list(sel.groups[, i]))
+  
+  
+  sel_independent <- function(sel.group, intable, deltaTimeComparedTo, 
+                              countsName) {
+    ref <- 1
+    setkeyv(intable, cols = c(stationCol, if(camerasIndependent) cameraCol,
+                              columnOfInterest))
+    subtable <- intable[sel.group, ]
+    
+    if(deltaTimeComparedTo == "lastIndependentRecord") {
+      repeat {
+        ref.time <- subtable[rn == ref, DateTimeOriginal]
+        subtable[rn >= ref, 
+                  delta.time.secs := difftime(DateTimeOriginal, ref.time, units="secs")]
+        if(hasArg(countsName)) {
+          max.count <- max(subtable[rn >= ref & delta.time.secs <= (minDeltaTime * 60), 
+                                countsName, with=FALSE])
+          
+          setkeyv(subtable, c("rn", countsName))
+          ref.rn <- subtable[J(ref:max(rn), max.count), min(rn)]
+          setkey(subtable, rn)
+          subtable[J(ref.rn), independent := TRUE]
+        } else {
+          ref.rn <- ref
+          setkey(subtable, rn)
+          subtable[J(ref.rn), independent := TRUE]
+        }
+        
+        if(sum(subtable[J(ref.rn:max(rn)), delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
+          if(ref < ref.rn) {
+            ref.time <- subtable[J(ref.rn), DateTimeOriginal]
+            subtable[J(ref.rn:max(rn)), 
+                      delta.time.secs := difftime(DateTimeOriginal, ref.time, units="secs")]
+            ref <- subtable[rn >= ref.rn & delta.time.secs > (minDeltaTime * 60), min(rn)]
+          } else {
+            ref <- subtable[rn > ref & delta.time.secs > (minDeltaTime * 60), min(rn)]
+          }
+        } else {
+          break
+        }
+      }
+      subtable[independent == TRUE, 
+               delta.time.secs := c(0, difftime(tail(DateTimeOriginal, -1), 
+                                                head(DateTimeOriginal, -1), 
+                                                units = "secs"))]
+    } else { # if "lastRecord"
+      subtable[ , delta.time.secs := c(0, difftime(tail(DateTimeOriginal, -1), 
+                                                   head(DateTimeOriginal, -1), 
+                                                   units = "secs"))]
+      
+      if(hasArg(countsName)) {
+        repeat {
+          if(ref == subtable[, max(rn)] |
+            !isTRUE(as.logical(sum(subtable[rn > ref, delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)))) {
+            ref.lim <-  subtable[, max(rn)] + 1
+          } else {
+            if(sum(subtable[rn > ref, delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
+              ref.lim <- subtable[rn > ref & delta.time.secs > (minDeltaTime * 60), min(rn)]
+            } 
+          }
+          max.count <- max(subtable[rn %in% ref:(ref.lim - 1), countsName, with=FALSE])
+          
+          setkeyv(subtable, c("rn", countsName))
+          ref.rn <- subtable[J(ref:(ref.lim - 1), max.count), min(rn)]
+          setkey(subtable, rn)
+          subtable[ref.rn, independent := TRUE]
+          if(ref.lim <= subtable[, max(rn)]) {
+            ref <- ref.lim
+          } else {
+            break
+          }
+        }
+      } else {
+        subtable[1, independent := TRUE]
+        subtable[delta.time.secs > (minDeltaTime * 60), independent := TRUE]
+      }
+    }
+    return(subtable[independent == TRUE, ])
+  }
+  ##############################################################################
+  
+  
+  # check if all Exif DateTimeOriginal tags were read correctly
+  if(any(is.na(intable$DateTimeOriginal))){
+    which.tmp <- which(is.na(intable$DateTimeOriginal))
+    if(length(which.tmp) == nrow(intable)) stop("Could not read any Exif DateTimeOriginal tag at station: ", paste(unique(intable[which.tmp, stationCol])), " Consider checking for corrupted Exif metadata.")
+    warning(paste("Could not read Exif DateTimeOriginal tag of", length(which.tmp),"image(s) at station", paste(unique(intable[which.tmp, stationCol]), collapse = ", "), ". Will omit them. Consider checking for corrupted Exif metadata. \n",
+                  paste(file.path(intable[which.tmp, "Directory"],
+                                  intable[which.tmp, "FileName"]), collapse = "\n")), call. = FALSE, immediate. = TRUE)
+    intable <- intable[-which.tmp ,]
+    rm(which.tmp)
+  }
+  
+  intable[, stationCol] <- as.character.Date(intable[, stationCol])
+  # prepare to add time difference between observations columns
+  intable.dt <- data.table(intable)
+  
+  # introduce column specifying independence of records
+  if(minDeltaTime == 0) {
+    intable.dt[, independent := TRUE]    # all independent if no temporal filtering
+  } else {
+    intable.dt[, independent := FALSE]
+  }
+  
+  intable.dt[, rn := 1:.N, by=c(columnOfInterest, stationCol, 
+                             if(camerasIndependent) cameraCol)]
+  
+  if(camerasIndependent){
+    sel <- intable.dt[, unique(.SD), .SDcols=columnOfInterest, by=c(stationCol, cameraCol)]
+  } else {
+    sel <- intable.dt[, unique(.SD), .SDcols=columnOfInterest, by=stationCol]
+  }
+  
+  sel.groups <- sel[, apply(.SD, 1, c), .SDcols=c(stationCol, 
+                                                if(camerasIndependent) cameraCol,
+                                                columnOfInterest)]
+  sel.groups <- lapply(1:ncol(sel.groups), extact_sel_groups, sel.groups)
+  
+  loutTable <- lapply(sel.groups, sel_independent, intable.dt, deltaTimeComparedTo,
+                 countsName=countsName)
+  # keep only independent records
+  outtable <- rbindlist(loutTable)
+  
+  return(outtable)
 }
