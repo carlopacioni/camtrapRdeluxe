@@ -303,7 +303,7 @@ recordTable <- function(inDir,
 
   # warning if additionalMetadataTags were not found
   if(hasArg(additionalMetadataTags)){
-    whichadditionalMetadataTagsFound <- which(gsub(additionalMetadataTags, pattern = ":", replacement = ".") %in% colnames(record.table))   # replace : in additionalMetadataTags (if specifying tag groups) with . as found in column names
+    whichadditionalMetadataTagsFound <- which(additionalMetadataTags %in% colnames(record.table))   # replace : in additionalMetadataTags (if specifying tag groups) with . as found in column names
     if(length(whichadditionalMetadataTagsFound) < length(additionalMetadataTags)){
       if(length(whichadditionalMetadataTagsFound) == 0) {  # if none of the additionalMetadataTags was found
         warning(paste("metadata tag(s)  not found in image metadata:  ", paste(additionalMetadataTags, collapse = ", ")), call. = FALSE)
@@ -324,12 +324,17 @@ recordTable <- function(inDir,
                  "Directory", "FileName", "DateTimeOriginal", "Date", "Time", "delta.time.secs",
                  "delta.time.mins", "delta.time.hours", "delta.time.days",
                  if(hasArg(countsName)) countsName,
-                 if(hasArg(additionalMetadataTags)) "HierarchicalSubject")
+                 if(hasArg(additionalMetadataTags))
+                   if("HierarchicalSubject" %in% names(record.table)) "HierarchicalSubject")
   metadata.cols <- names(record.table)[-which(names(record.table) %in% new.order)]
 
   setcolorder(record.table,
               if(hasArg(additionalMetadataTags)) {
-                c(head(new.order, -1), metadata.cols, "HierarchicalSubject")
+                if("HierarchicalSubject" %in% names(record.table)) {
+                  c(head(new.order, -1), metadata.cols, "HierarchicalSubject")
+                } else {
+                  c(new.order, metadata.cols)
+                }
               } else {
                 new.order
               })
