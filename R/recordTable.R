@@ -334,6 +334,10 @@ recordTable <- function(inDir,
                 new.order
               })
 
+  # Sort by station, species and camera if relevant
+  setkeyv(record.table, c(stationCol, speciesCol,
+                          if(camerasIndependent) cameraCol, "DateTimeOriginal"))
+
   # make column "HierarchicalSubject" the last column
   #col_to_move <- which(colnames(record.table3) %in% metadata.tagname)
   #if(length(col_to_move) >= 1){
