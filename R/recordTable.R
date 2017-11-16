@@ -294,7 +294,7 @@ recordTable <- function(inDir,
   #rownames(record.table3) <- NULL
 
   # compute delta time in hours and days
-  record.table[, delta.time.secs := round(delta.time.secs, digits = 0)]
+  record.table[, delta.time.secs := as.numeric(round(delta.time.secs, digits = 0))]
   record.table[, delta.time.mins := round(delta.time.secs / 60, digits = 0)]
   record.table[, delta.time.hours := round(delta.time.mins  / 60, digits = 1)]
   record.table[, delta.time.days  := round(delta.time.hours / 24, digits = 1)]
