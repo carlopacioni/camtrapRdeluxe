@@ -152,7 +152,7 @@ assignSpeciesID <- function(intable,
 
 
   if(IDfrom == "directory"){
-    intable[,speciesCol] <-  sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), 
+    intable[,speciesCol] <-  sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE),
                                     FUN = function(X){if(is.null(speciesPosition)) {
                                                             X[length(X)]
                                                           } else {
@@ -255,17 +255,17 @@ addStationCameraID <- function(intable,
     if(cameraID == "directory"){            # this can only happen in recordTable. Not in recordTableIndividual
       if(IDfrom == "directory"){             # assumes directory structure: Station/Camera/Species
         intable <- cbind(intable,
-                         sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), 
+                         sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE),
                                 FUN = function(X){
                                           if(is.null(cameraIDposition)) {
                                             X[length(X) - 1]
                                           } else {
                                             X[cameraIDposition]
                                           }
-                                  }))  
+                                  }))
         } else {                                    # assumes directory structure: Station/Camera
         intable <- cbind(intable,
-                         sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), FUN = function(X){X[length(X)]}))  
+                         sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), FUN = function(X){X[length(X)]}))
         }
       colnames(intable)[ncol(intable)]     <- cameraCol
     }
@@ -281,7 +281,7 @@ checkDateTimeOriginal <- function (intable, dirs_short, i){
       warning(paste(dirs_short[i], ": no readable date/time information. Skipping"), call. = FALSE,  immediate. = TRUE)
       intable <- NULL
     } else {
-    
+
     # if date/time information is missing for some records only
      if(any(intable$DateTimeOriginal == "-")){
       which_no_time <- which(intable$DateTimeOriginal == "-")
@@ -298,8 +298,8 @@ checkDateTimeOriginal <- function (intable, dirs_short, i){
           if(isTRUE(removeDuplicateRecords)){
             if(isTRUE(camerasIndependent)){
               remove.tmp <- which(
-                duplicated(metadata.tmp[, c("DateTimeOriginal", stationCol, 
-                                           speciesCol, cameraCol, 
+                duplicated(metadata.tmp[, c("DateTimeOriginal", stationCol,
+                                           speciesCol, cameraCol,
                                            if(hasArg(countsName)) countsName)]))
               if(length(remove.tmp >= 1)){
                 metadata.tmp <- metadata.tmp[-remove.tmp,]
@@ -307,7 +307,7 @@ checkDateTimeOriginal <- function (intable, dirs_short, i){
               }
             } else {
               remove.tmp <- which(
-                duplicated(metadata.tmp[, c("DateTimeOriginal", stationCol, speciesCol, 
+                duplicated(metadata.tmp[, c("DateTimeOriginal", stationCol, speciesCol,
                                             if(hasArg(countsName)) countsName)]))
               if(length(remove.tmp >= 1)) {
                 metadata.tmp <- metadata.tmp[-remove.tmp,]
@@ -642,7 +642,7 @@ calculateTrappingEffort <- function(cam.op,
   if(isTRUE(scaleEffort2)){
     if(occasionLength2 == 1) stop("cannot scale effort if occasionLength is 1", call. = FALSE)
     if(length(table(effort)) == 1) stop(paste("all values of effort are identical (", names(table(effort)), "). Cannot scale effort", sep = ""), call. = FALSE)
-    
+
     scale.eff.tmp <- scale(as.vector(effort))                       # scale effort (as a vector, not matrix)
     scale.eff.tmp.attr <- data.frame(effort.scaled.center = NA,     # prepare empty data frame
                                      effort.scaled.scale = NA)
@@ -948,27 +948,28 @@ assessTemporalIndependence <- function(intable,
                                        stationCol,
                                        minDeltaTime,
                                        countsName) {
-  
+
   ############################ Helper function #################################
   extact_sel_groups <- function(i, sel.groups) return(as.list(sel.groups[, i]))
-  
-  
-  sel_independent <- function(sel.group, intable, deltaTimeComparedTo, 
+
+
+  sel_independent <- function(sel.group, intable, deltaTimeComparedTo,
                               countsName) {
     ref <- 1
     setkeyv(intable, cols = c(stationCol, if(camerasIndependent) cameraCol,
                               columnOfInterest))
     subtable <- intable[sel.group, ]
-    
+
     if(deltaTimeComparedTo == "lastIndependentRecord") {
       repeat {
-        ref.time <- subtable[rn == ref, DateTimeOriginal]
-        subtable[rn >= ref, 
+        setkey(subtable, rn)
+        ref.time <- subtable[J(ref), DateTimeOriginal]
+        subtable[J(ref:max(rn)),
                   delta.time.secs := difftime(DateTimeOriginal, ref.time, units="secs")]
         if(hasArg(countsName)) {
-          max.count <- max(subtable[rn >= ref & delta.time.secs <= (minDeltaTime * 60), 
+          max.count <- max(subtable[rn >= ref & delta.time.secs <= (minDeltaTime * 60),
                                 countsName, with=FALSE])
-          
+
           setkeyv(subtable, c("rn", countsName))
           ref.rn <- subtable[J(ref:max(rn), max.count), min(rn)]
           setkey(subtable, rn)
@@ -978,11 +979,11 @@ assessTemporalIndependence <- function(intable,
           setkey(subtable, rn)
           subtable[J(ref.rn), independent := TRUE]
         }
-        
+
         if(sum(subtable[J(ref.rn:max(rn)), delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
           if(ref < ref.rn) {
             ref.time <- subtable[J(ref.rn), DateTimeOriginal]
-            subtable[J(ref.rn:max(rn)), 
+            subtable[J(ref.rn:max(rn)),
                       delta.time.secs := difftime(DateTimeOriginal, ref.time, units="secs")]
             ref <- subtable[rn >= ref.rn & delta.time.secs > (minDeltaTime * 60), min(rn)]
           } else {
@@ -992,15 +993,15 @@ assessTemporalIndependence <- function(intable,
           break
         }
       }
-      subtable[independent == TRUE, 
-               delta.time.secs := c(0, difftime(tail(DateTimeOriginal, -1), 
-                                                head(DateTimeOriginal, -1), 
+      subtable[independent == TRUE,
+               delta.time.secs := c(0, difftime(tail(DateTimeOriginal, -1),
+                                                head(DateTimeOriginal, -1),
                                                 units = "secs"))]
     } else { # if "lastRecord"
-      subtable[ , delta.time.secs := c(0, difftime(tail(DateTimeOriginal, -1), 
-                                                   head(DateTimeOriginal, -1), 
+      subtable[ , delta.time.secs := c(0, difftime(tail(DateTimeOriginal, -1),
+                                                   head(DateTimeOriginal, -1),
                                                    units = "secs"))]
-      
+
       if(hasArg(countsName)) {
         repeat {
           if(ref == subtable[, max(rn)] |
@@ -1009,10 +1010,10 @@ assessTemporalIndependence <- function(intable,
           } else {
             if(sum(subtable[rn > ref, delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
               ref.lim <- subtable[rn > ref & delta.time.secs > (minDeltaTime * 60), min(rn)]
-            } 
+            }
           }
           max.count <- max(subtable[rn %in% ref:(ref.lim - 1), countsName, with=FALSE])
-          
+
           setkeyv(subtable, c("rn", countsName))
           ref.rn <- subtable[J(ref:(ref.lim - 1), max.count), min(rn)]
           setkey(subtable, rn)
@@ -1031,8 +1032,8 @@ assessTemporalIndependence <- function(intable,
     return(subtable[independent == TRUE, ])
   }
   ##############################################################################
-  
-  
+
+
   # check if all Exif DateTimeOriginal tags were read correctly
   if(any(is.na(intable$DateTimeOriginal))){
     which.tmp <- which(is.na(intable$DateTimeOriginal))
@@ -1043,36 +1044,36 @@ assessTemporalIndependence <- function(intable,
     intable <- intable[-which.tmp ,]
     rm(which.tmp)
   }
-  
+
   intable[, stationCol] <- as.character.Date(intable[, stationCol])
   # prepare to add time difference between observations columns
   intable.dt <- data.table(intable)
-  
+
   # introduce column specifying independence of records
   if(minDeltaTime == 0) {
     intable.dt[, independent := TRUE]    # all independent if no temporal filtering
   } else {
     intable.dt[, independent := FALSE]
   }
-  
-  intable.dt[, rn := 1:.N, by=c(columnOfInterest, stationCol, 
+
+  intable.dt[, rn := 1:.N, by=c(columnOfInterest, stationCol,
                              if(camerasIndependent) cameraCol)]
-  
+
   if(camerasIndependent){
     sel <- intable.dt[, unique(.SD), .SDcols=columnOfInterest, by=c(stationCol, cameraCol)]
   } else {
     sel <- intable.dt[, unique(.SD), .SDcols=columnOfInterest, by=stationCol]
   }
-  
-  sel.groups <- sel[, apply(.SD, 1, c), .SDcols=c(stationCol, 
+
+  sel.groups <- sel[, apply(.SD, 1, c), .SDcols=c(stationCol,
                                                 if(camerasIndependent) cameraCol,
                                                 columnOfInterest)]
   sel.groups <- lapply(1:ncol(sel.groups), extact_sel_groups, sel.groups)
-  
+
   loutTable <- lapply(sel.groups, sel_independent, intable.dt, deltaTimeComparedTo,
                  countsName=countsName)
   # keep only independent records
   outtable <- rbindlist(loutTable)
-  
+
   return(outtable)
 }
