@@ -303,8 +303,14 @@ recordTable <- function(inDir,
 
   # warning if additionalMetadataTags were not found
   if(hasArg(additionalMetadataTags)){
-    whichadditionalMetadataTagsFound <- which(additionalMetadataTags %in% colnames(record.table))   # replace : in additionalMetadataTags (if specifying tag groups) with . as found in column names
-    if(length(whichadditionalMetadataTagsFound) < length(additionalMetadataTags)){
+    additionalMetadataTagsNew <- gsub(additionalMetadataTags, pattern = ":", replacement = ".")
+    whichadditionalMetadataTagswithcol <- which(additionalMetadataTags %in% colnames(record.table))
+    if(length(whichadditionalMetadataTagswithcol) > 0)
+      setnames(record.table, additionalMetadataTags[whichadditionalMetadataTagswithcol],
+               additionalMetadataTagsNew[whichadditionalMetadataTagswithcol])
+
+    whichadditionalMetadataTagsFound <- which(additionalMetadataTagsNew %in% colnames(record.table))   # replace : in additionalMetadataTags (if specifying tag groups) with . as found in column names
+    if(length(whichadditionalMetadataTagsFound) < length(additionalMetadataTagsNew)){
       if(length(whichadditionalMetadataTagsFound) == 0) {  # if none of the additionalMetadataTags was found
         warning(paste("metadata tag(s)  not found in image metadata:  ", paste(additionalMetadataTags, collapse = ", ")), call. = FALSE)
         } else {                                                            # if only some of the additionalMetadataTags was found
