@@ -162,10 +162,9 @@ assignSpeciesID <- function(intable,
     return(intable)
   } else {
     if(hasArg(metadataSpeciesTag)){
-      metadataSpeciesTag2 <- paste("metadata", metadataSpeciesTag, sep = "_")
-      if(metadataSpeciesTag2 %in% colnames(intable)){
+      if(metadataSpeciesTag %in% colnames(intable)){
 
-        intable[,speciesCol] <- intable[,metadataSpeciesTag2]
+        intable[,speciesCol] <- intable[,metadataSpeciesTag]
         nrow.intable <- nrow(intable)
         species_records_to_remove <- which(is.na(intable[,speciesCol]))
         if(length(species_records_to_remove) >= 1){
@@ -973,13 +972,12 @@ assessTemporalIndependence <- function(intable,
           setkeyv(subtable, c("rn", countsName))
           ref.rn <- subtable[rn >= ref & Counts == max.count, min(rn)]
           setkey(subtable, rn)
-          subtable[J(ref.rn), independent := TRUE]
         } else {
           ref.rn <- ref
           setkey(subtable, rn)
-          subtable[J(ref.rn), independent := TRUE]
         }
-
+        subtable[J(ref.rn), independent := TRUE]
+        subtable[J(ref.rn), IndepRecStartTime := ref.time]
         if(sum(subtable[J(ref:max(rn)), delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
           ref <- subtable[rn > ref & delta.time.secs > (minDeltaTime * 60), min(rn)]
           } else {
@@ -1011,6 +1009,8 @@ assessTemporalIndependence <- function(intable,
           ref.rn <- subtable[rn %in% ref:(ref.lim - 1) & Counts == max.count, min(rn)]
           setkey(subtable, rn)
           subtable[ref.rn, independent := TRUE]
+          ref.time <- subtable[J(ref), DateTimeOriginal]
+          subtable[J(ref.rn), IndepRecStartTime := ref.time]
           if(ref.lim <= subtable[, max(rn)]) {
             ref <- ref.lim
           } else {
@@ -1020,6 +1020,7 @@ assessTemporalIndependence <- function(intable,
       } else {
         subtable[1, independent := TRUE]
         subtable[delta.time.secs > (minDeltaTime * 60), independent := TRUE]
+        subtable[independent == TRUE, IndepRecStartTime := DateTimeOriginal]
       }
     }
     return(subtable[independent == TRUE, ])
