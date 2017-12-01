@@ -980,16 +980,9 @@ assessTemporalIndependence <- function(intable,
           subtable[J(ref.rn), independent := TRUE]
         }
 
-        if(sum(subtable[J(ref.rn:max(rn)), delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
-          if(ref < ref.rn) {
-            ref.time <- subtable[J(ref.rn), DateTimeOriginal]
-            subtable[J(ref.rn:max(rn)),
-                      delta.time.secs := difftime(DateTimeOriginal, ref.time, units="secs")]
-            ref <- subtable[rn >= ref.rn & delta.time.secs > (minDeltaTime * 60), min(rn)]
+        if(sum(subtable[J(ref:max(rn)), delta.time.secs] > minDeltaTime * 60, na.rm=TRUE)) {
+          ref <- subtable[rn > ref & delta.time.secs > (minDeltaTime * 60), min(rn)]
           } else {
-            ref <- subtable[rn > ref & delta.time.secs > (minDeltaTime * 60), min(rn)]
-          }
-        } else {
           break
         }
       }
