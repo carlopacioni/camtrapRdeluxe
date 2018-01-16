@@ -1,4 +1,5 @@
 recordTableIndividual <- function(inDir,
+                                  hasStationFolders,
                                   IDfrom,
                                   StationIDfrom="directory",
                                   speciesIDfrom,
@@ -25,7 +26,15 @@ recordTableIndividual <- function(inDir,
 
 )
 {
-
+  if (!missing(hasStationFolders)) {
+    warning("argument hasStationFolders is deprecated; please use StationIDfrom instead.",
+            call. = FALSE)
+    if(hasStationFolders) {
+      StationIDfrom <- "directory"
+    } else {
+      StationIDfrom <- "filename"
+    }
+  }
 
   if(class(individualIDfrom) != "character"){stop("IDfrom must be of class 'character'")}
   if(individualIDfrom %in% c("metadata", "directory") == FALSE) stop("'IDfrom' must be 'metadata' or 'directory'")
