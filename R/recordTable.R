@@ -1,5 +1,6 @@
 recordTable <- function(inDir,
                         IDfrom,
+                        StationIDfrom="directory",
                         speciesIDfrom,
                         cameraIDfrom,
                         camerasIndependent,
