@@ -21,6 +21,11 @@ recordTable <- function(inDir,
                         countsName
 )
 {
+  if (!missing(IDfrom)) {
+    warning("argument IDfrom is deprecated; please use speciesIDfrom instead.",
+            call. = FALSE)
+    speciesIDfrom = "directory"
+  }
   recTable <- recordTableFUN(inDir=inDir,
                              IDfrom=IDfrom,
                              StationIDfrom=StationIDfrom,
