@@ -27,19 +27,6 @@ recordTableFUN <- function( inDir,
   #################### To DO ##########################################
   # add checks for new arguments
 
-  #################### MOVE TO SINGLE FUN #############################
-# dealing with users with older arguments
-  if (!missing(IDfrom)) {
-    warning("argument IDfrom is deprecated; please use speciesIDfrom or
-            individualIDfrom instead.",
-            call. = FALSE)
-    if(hasArg(individualIDfrom)) {
-      individualIDfrom < IDfrom
-    } else {
-      speciesIDfrom < IDfrom
-    }
-  }
-
   wd0 <- getwd()
   on.exit(setwd(wd0))
 
@@ -53,7 +40,7 @@ recordTableFUN <- function( inDir,
 
   if(class(StationIDfrom) != "character"){stop("StationIDfrom must be of class 'character'", call. = FALSE)}
   if(StationIDfrom %in% c("filename", "directory") == FALSE) {stop("StationIDfrom can only be 'filename', 'directory'", call. = FALSE)}
-  if(StationIDfrom == "directory") hasStationFolders <- TRUE
+  if(StationIDfrom == "directory") hasStationFolders <- TRUE else hasStationFolders <- FALSE
 
   if(class(speciesIDfrom) != "character"){stop("speciesIDfrom must be of class 'character'")}
   if(speciesIDfrom %in% c("metadata", "directory") == FALSE) stop("'speciesIDfrom' must be 'metadata' or 'directory'")
