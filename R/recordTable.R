@@ -1,5 +1,5 @@
 recordTable <- function(inDir,
-                        IDfrom,
+                        speciesIDfrom,
                         cameraID,
                         camerasIndependent,
                         exclude,
@@ -30,13 +30,13 @@ recordTable <- function(inDir,
 
   checkForSpacesInColumnNames(stationCol = stationCol)
 
-  if(class(IDfrom) != "character"){stop("IDfrom must be of class 'character'")}
-  if(IDfrom %in% c("metadata", "directory") == FALSE) stop("'IDfrom' must be 'metadata' or 'directory'")
+  if(class(speciesIDfrom) != "character"){stop("speciesIDfrom must be of class 'character'")}
+  if(speciesIDfrom %in% c("metadata", "directory") == FALSE) stop("'speciesIDfrom' must be 'metadata' or 'directory'")
 
- if(IDfrom == "metadata"){
+ if(speciesIDfrom == "metadata"){
     if(metadataHierarchyDelimitor %in% c("|", ":") == FALSE) stop("'metadataHierarchyDelimitor' must be '|' or ':'")
 
-    if(!hasArg(metadataSpeciesTag)) {stop("'metadataSpeciesTag' must be defined if IDfrom = 'metadata'")}
+    if(!hasArg(metadataSpeciesTag)) {stop("'metadataSpeciesTag' must be defined if speciesIDfrom = 'metadata'")}
     if(class(metadataSpeciesTag) != "character"){stop("metadataSpeciesTag must be of class 'character'")}
     if(length(metadataSpeciesTag) != 1){stop("metadataSpeciesTag must be of length 1")}
   }
@@ -84,8 +84,8 @@ recordTable <- function(inDir,
   if(hasArg(additionalMetadataTags)){
     if(class(additionalMetadataTags) != "character"){stop("additionalMetadataTags must be of class 'character'", call. = FALSE)}
     if(any(grep(pattern = " ", x = additionalMetadataTags, fixed = TRUE))) stop("In argument additionalMetadataTags, spaces are not allowed")
-    if("HierarchicalSubject" %in% additionalMetadataTags & IDfrom == "metadata")  {
-      warning("'HierarchicalSubject' may not be in 'additionalMetadataTags' if IDfrom = 'metadata'. It will be ignored because the function returns it anyway.", call. = FALSE)
+    if("HierarchicalSubject" %in% additionalMetadataTags & speciesIDfrom == "metadata")  {
+      warning("'HierarchicalSubject' may not be in 'additionalMetadataTags' if speciesIDfrom = 'metadata'. It will be ignored because the function returns it anyway.", call. = FALSE)
       additionalMetadataTags <- additionalMetadataTags[-grep(pattern = "HierarchicalSubject", x = additionalMetadataTags)]  # remove it
     }
   }
@@ -157,7 +157,7 @@ recordTable <- function(inDir,
       # add species names to metadata table (from folders or metadata, otherwise NA)
 
       metadata.tmp <- assignSpeciesID (intable                = metadata.tmp,
-                                       IDfrom                 = IDfrom,
+                                       IDfrom                 = speciesIDfrom,
                                        metadataSpeciesTag     = metadataSpeciesTag,
                                        speciesCol             = speciesCol,
                                        dirs_short             = dirs_short,
@@ -176,7 +176,7 @@ recordTable <- function(inDir,
       }
 
       # add station and camera id to metadata table
-      arg.list0 <- list(intable = metadata.tmp, dirs_short = dirs_short, stationCol = stationCol, hasStationFolders = TRUE, cameraCol = cameraCol, i = i, IDfrom = IDfrom)  # assumes station directories
+      arg.list0 <- list(intable = metadata.tmp, dirs_short = dirs_short, stationCol = stationCol, hasStationFolders = TRUE, cameraCol = cameraCol, i = i, IDfrom = speciesIDfrom)  # assumes station directories
 
       if(!hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, arg.list0)
       if( hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, c(arg.list0, cameraID = cameraID,
