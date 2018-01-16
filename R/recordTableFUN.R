@@ -211,9 +211,11 @@ recordTableFUN <- function( inDir,
                                                                           cameraIDposition=cameraIDposition))
 
       # remove species in argument "excluded"
+      if(hasArg(exclude)){
         if(any(tolower(metadata.tmp[,speciesCol]) %in% tolower(exclude))) {  # if there is anything to remove
           metadata.tmp <- metadata.tmp[-which(tolower(metadata.tmp[,speciesCol]) %in% tolower(exclude)),]
         }
+      }
 
       if(nrow(metadata.tmp) >= 1) {   # if anything left after excluding species, do
 
