@@ -26,6 +26,15 @@ recordTableIndividual <- function(inDir,
 
 )
 {
+  # dealing with users with older arguments
+  if (!missing(IDfrom)) {
+    warning("argument IDfrom is deprecated; please use speciesIDfrom and
+            individualIDfrom instead.",
+            call. = FALSE)
+    individualIDfrom = IDfrom
+      speciesIDfrom = "directory"
+  }
+
   if (!missing(hasStationFolders)) {
     warning("argument hasStationFolders is deprecated; please use StationIDfrom instead.",
             call. = FALSE)
