@@ -1023,6 +1023,7 @@ assessTemporalIndependence <- function(intable,
         subtable[independent == TRUE, IndepRecStartTime := DateTimeOriginal]
       }
     }
+    subtable[, IndepRecStartTime := NULL]
     return(subtable[independent == TRUE, ])
   }
   ##############################################################################
