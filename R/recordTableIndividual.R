@@ -18,11 +18,12 @@ recordTableIndividual <- function(inDir,
                                   metadataIDTag,
                                   additionalMetadataTags,
                                   removeDuplicateRecords = TRUE,
+                                  stationIDposition = NULL,
                                   speciesPosition = NULL,
                                   cameraIDposition = NULL,
                                   directoryInfoPositions,
-                                  directoryInfoNames,
-                                  countsName
+                                  directoryInfoNames
+
 
 )
 {
@@ -82,6 +83,7 @@ recTable <- recordTableFUN(inDir=inDir,
                            metadataIDTag=metadataIDTag,
                            additionalMetadataTags=additionalMetadataTags,
                            removeDuplicateRecords=removeDuplicateRecords,
+                           stationIDposition=stationIDposition,
                            speciesPosition=speciesPosition,
                            cameraIDposition=cameraIDposition,
                            directoryInfoPositions=directoryInfoPositions,

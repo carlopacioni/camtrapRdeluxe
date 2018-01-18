@@ -17,6 +17,7 @@ recordTableFUN <- function( inDir,
                             metadataIDTag,
                             additionalMetadataTags,
                             removeDuplicateRecords = TRUE,
+                            stationIDposition = NULL,
                             speciesPosition = NULL,
                             cameraIDposition = NULL,
                             directoryInfoPositions,
@@ -204,11 +205,14 @@ recordTableFUN <- function( inDir,
       }
 
       # add station and camera id to metadata table
-      arg.list0 <- list(intable = metadata.tmp, dirs_short = dirs_short, stationCol = stationCol, hasStationFolders = hasStationFolders, cameraCol = cameraCol, i = i, IDfrom = speciesIDfrom)
+      arg.list0 <- list(intable=metadata.tmp, dirs_short=dirs_short, stationCol=stationCol,
+                        hasStationFolders=hasStationFolders, cameraCol=cameraCol,
+                        i=i, IDfrom=speciesIDfrom, stationIDposition=stationIDposition)
 
       if(!hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, arg.list0)
-      if( hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, c(arg.list0, cameraID = cameraID,
-                                                                          cameraIDposition=cameraIDposition))
+      if( hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID,
+                                                    c(arg.list0, cameraID=cameraID,
+                                                      cameraIDposition=cameraIDposition))
 
       # remove species in argument "excluded"
       if(hasArg(exclude)){

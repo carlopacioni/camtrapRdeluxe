@@ -219,6 +219,7 @@ addStationCameraID <- function(intable,
                                hasStationFolders,
                                i,
                                IDfrom,
+                               stationIDposition,
                                cameraIDposition=NULL)
 {
 
@@ -227,7 +228,16 @@ addStationCameraID <- function(intable,
   # append station ID
 
   if(isTRUE(hasStationFolders)) {       # take station ID from station directories
+    if(is.null(stationIDposition)) {
     intable <- cbind(intable, dirs_short[i])
+    } else {
+      intable <- cbind(intable,
+                       sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE),
+                              FUN = function(X){
+                                X[stationIDposition]
+                                }
+                              ))
+    }
     colnames(intable)[ncol(intable)] <- stationCol
 
   } else  {                             # take station ID from image filenames
@@ -251,8 +261,8 @@ addStationCameraID <- function(intable,
         colnames(intable)[ncol(intable)]     <- cameraCol
       }
     }
-    if(cameraID == "directory"){            # this can only happen in recordTable. Not in recordTableIndividual
-      if(IDfrom == "directory"){             # assumes directory structure: Station/Camera/Species
+    if(cameraID == "directory"){
+      if(IDfrom == "directory"){
         intable <- cbind(intable,
                          sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE),
                                 FUN = function(X){
@@ -262,7 +272,7 @@ addStationCameraID <- function(intable,
                                             X[cameraIDposition]
                                           }
                                   }))
-        } else {                                    # assumes directory structure: Station/Camera
+        } else {
         intable <- cbind(intable,
                          sapply(strsplit(intable$Directory, split = file.sep, fixed = TRUE), FUN = function(X){X[length(X)]}))
         }

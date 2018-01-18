@@ -15,6 +15,7 @@ recordTable <- function(inDir,
                         metadataSpeciesTag,
                         additionalMetadataTags,
                         removeDuplicateRecords = TRUE,
+                        stationIDposition = NULL,
                         speciesPosition = NULL,
                         cameraIDposition = NULL,
                         directoryInfoPositions,
@@ -25,7 +26,7 @@ recordTable <- function(inDir,
   if (!missing(IDfrom)) {
     warning("argument IDfrom is deprecated; please use speciesIDfrom instead.",
             call. = FALSE)
-    speciesIDfrom = "directory"
+    speciesIDfrom = IDfrom
   }
   recTable <- recordTableFUN(inDir=inDir,
                              IDfrom=IDfrom,
@@ -44,6 +45,7 @@ recordTable <- function(inDir,
                              metadataSpeciesTag=metadataSpeciesTag,
                              additionalMetadataTags=additionalMetadataTags,
                              removeDuplicateRecords=removeDuplicateRecords,
+                             stationIDposition=stationIDposition,
                              speciesPosition=speciesPosition,
                              cameraIDposition=cameraIDposition,
                              directoryInfoPositions=directoryInfoPositions,
