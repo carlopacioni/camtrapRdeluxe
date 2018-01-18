@@ -20,5 +20,6 @@ importFrom("parallel", detectCores, makeCluster, clusterExport, stopCluster)
 export(activityDensity, activityHistogram, activityOverlap, activityRadial, addCopyrightTag,
       appendSpeciesNames, cameraOperation, checkSpeciesIdentification, checkSpeciesNames,
       createSpeciesFolders, createStationFolders, detectionHistory, detectionMaps, exifTagNames,
-	    exiftoolPath, fixDateTimeOriginal, getSpeciesImages, imageRename, recordTable, recordTable.par,
+	    exiftoolPath, fixDateTimeOriginal, folderIndices, getSpeciesImages, imageRename,
+      recordTable, recordTable.par,
       recordTableIndividual, spatialDetectionHistory, surveyReport, timeShiftImages)
