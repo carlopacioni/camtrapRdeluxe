@@ -1,5 +1,6 @@
 recordTable <- function(inDir,
                         IDfrom,
+                        cameraID,
                         StationIDfrom="directory",
                         speciesIDfrom,
                         cameraIDfrom,
@@ -28,6 +29,13 @@ recordTable <- function(inDir,
             call. = FALSE)
     speciesIDfrom = IDfrom
   }
+
+  if (!missing(cameraID)) {
+    warning("argument cameraID is deprecated; please use cameraIDfrom instead.",
+            call. = FALSE)
+    cameraIDfrom = cameraID
+  }
+
   recTable <- recordTableFUN(inDir=inDir,
                              IDfrom=IDfrom,
                              StationIDfrom=StationIDfrom,
