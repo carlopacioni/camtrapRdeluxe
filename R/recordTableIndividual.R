@@ -46,6 +46,13 @@ recordTableIndividual <- function(inDir,
     }
   }
 
+  if (!missing(cameraID)) {
+    warning("argument cameraID is deprecated; please use cameraIDfrom instead.",
+            call. = FALSE)
+    cameraIDfrom = cameraID
+  }
+
+
   if(class(individualIDfrom) != "character"){stop("IDfrom must be of class 'character'")}
   if(individualIDfrom %in% c("metadata", "directory") == FALSE) stop("'IDfrom' must be 'metadata' or 'directory'")
 
