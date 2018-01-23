@@ -58,7 +58,7 @@ recordTable <- function(inDir,
                              cameraIDposition=cameraIDposition,
                              directoryInfoPositions=directoryInfoPositions,
                              directoryInfoNames=directoryInfoNames,
-                             countsName)
+                             countsName=countsName)
 
   return(recTable)
   }
