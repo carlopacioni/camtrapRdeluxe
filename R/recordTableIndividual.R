@@ -95,7 +95,7 @@ recTable <- recordTableFUN(inDir=inDir,
                            cameraIDposition=cameraIDposition,
                            directoryInfoPositions=directoryInfoPositions,
                            directoryInfoNames=directoryInfoNames,
-                           countsName)
+                           countsName=countsName)
 
   return(recTable)
 }
