@@ -1,4 +1,5 @@
 recordTableIndividual <- function(inDir,
+                                  cameraID,
                                   hasStationFolders,
                                   IDfrom,
                                   StationIDfrom="directory",
@@ -22,10 +23,7 @@ recordTableIndividual <- function(inDir,
                                   speciesPosition = NULL,
                                   cameraIDposition = NULL,
                                   directoryInfoPositions,
-                                  directoryInfoNames
-
-
-)
+                                  directoryInfoNames)
 {
   # dealing with users with older arguments
   if (!missing(IDfrom)) {
@@ -69,8 +67,6 @@ recordTableIndividual <- function(inDir,
     if(length(metadataIDTag) != 1){stop("metadataIDTag must be of length 1", call. = FALSE)}
   }
 
-  if(hasArg(countsName)) stop("Counts cannot be used in recordTableIndividual")
-
 recTable <- recordTableFUN(inDir=inDir,
                            IDfrom=IDfrom,
                            StationIDfrom=StationIDfrom,
@@ -94,8 +90,7 @@ recTable <- recordTableFUN(inDir=inDir,
                            speciesPosition=speciesPosition,
                            cameraIDposition=cameraIDposition,
                            directoryInfoPositions=directoryInfoPositions,
-                           directoryInfoNames=directoryInfoNames,
-                           countsName=countsName)
+                           directoryInfoNames=directoryInfoNames)
 
   return(recTable)
 }
