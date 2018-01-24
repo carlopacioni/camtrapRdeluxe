@@ -71,10 +71,10 @@ recordTableFUN <- function( inDir,
     if(length(metadataSpeciesTag) != 1){stop("metadataSpeciesTag must be of length 1", call. = FALSE)}
   }
 
-  if(hasArg(cameraID)){
-    if(class(cameraID) != "character"){stop("cameraID must be of class 'character'", call. = FALSE)}
-    if(cameraID %in% c("filename", "directory") == FALSE) {stop("cameraID can only be 'filename', 'directory', or missing", call. = FALSE)}
-    if(!hasArg(camerasIndependent)){stop("camerasIndependent is not defined. It must be defined if cameraID is defined", call. = FALSE)}
+  if(hasArg(cameraIDfrom)){
+    if(class(cameraIDfrom) != "character"){stop("cameraIDfrom must be of class 'character'", call. = FALSE)}
+    if(cameraIDfrom %in% c("filename", "directory") == FALSE) {stop("cameraIDfrom can only be 'filename', 'directory', or missing", call. = FALSE)}
+    if(!hasArg(camerasIndependent)){stop("camerasIndependent is not defined. It must be defined if cameraIDfrom is defined", call. = FALSE)}
     if(class(camerasIndependent) != "logical"){stop("camerasIndependent must be of class 'logical'", call. = FALSE)}
   } else { camerasIndependent <- FALSE}
 
@@ -209,9 +209,9 @@ recordTableFUN <- function( inDir,
                         hasStationFolders=hasStationFolders, cameraCol=cameraCol,
                         i=i, IDfrom=speciesIDfrom, stationIDposition=stationIDposition)
 
-      if(!hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID, arg.list0)
-      if( hasArg(cameraID)) metadata.tmp <- do.call(addStationCameraID,
-                                                    c(arg.list0, cameraID=cameraID,
+      if(!hasArg(cameraIDfrom)) metadata.tmp <- do.call(addStationCameraID, arg.list0)
+      if( hasArg(cameraIDfrom)) metadata.tmp <- do.call(addStationCameraID,
+                                                    c(arg.list0, cameraID=cameraIDfrom,
                                                       cameraIDposition=cameraIDposition))
 
       # remove species in argument "excluded"
@@ -308,7 +308,7 @@ recordTableFUN <- function( inDir,
   }
 
   # set columns order
-  new.order <- c(stationCol, if(hasArg(cameraID)) cameraCol, speciesCol,
+  new.order <- c(stationCol, if(hasArg(cameraIDfrom)) cameraCol, speciesCol,
                  if(hasArg(individualIDfrom)) individualCol,
                  "Directory", "FileName", "DateTimeOriginal", "Date", "Time", "delta.time.secs",
                  "delta.time.mins", "delta.time.hours", "delta.time.days",
