@@ -170,7 +170,7 @@ assignSpeciesID <- function(intable,
         if(length(species_records_to_remove) >= 1){
           intable <- intable[-species_records_to_remove,]      #remove records without species tag
           warning(paste( dirs_short[i_tmp],":  removed", length(species_records_to_remove), "records out of", nrow.intable,
-                         "because of missing species metadata tag"), call. = FALSE, immediate. = TRUE)
+                         "because of missing", speciesCol, "metadata tag"), call. = FALSE, immediate. = TRUE)
         }
 
         intable <- separateMultipleSpecies (intable                = intable,
