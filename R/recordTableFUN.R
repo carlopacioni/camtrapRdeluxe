@@ -310,8 +310,8 @@ recordTableFUN <- function( inDir,
   # set columns order
   new.order <- c(stationCol, if(hasArg(cameraIDfrom)) cameraCol, speciesCol,
                  if(hasArg(individualIDfrom)) individualCol,
-                 "Directory", "FileName", "DateTimeOriginal", "Date", "Time", "delta.time.secs",
-                 "delta.time.mins", "delta.time.hours", "delta.time.days",
+                  "DateTimeOriginal", "Date", "Time", "delta.time.secs",
+                 "delta.time.mins", "delta.time.hours", "delta.time.days", "Directory", "FileName",
                  if(hasArg(countsName)) countsName,
                  if(hasArg(additionalMetadataTags))
                    if("HierarchicalSubject" %in% names(record.table)) "HierarchicalSubject")
