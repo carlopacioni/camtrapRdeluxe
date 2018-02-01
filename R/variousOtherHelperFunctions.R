@@ -980,7 +980,7 @@ assessTemporalIndependence <- function(intable,
                                 countsName, with=FALSE])
 
           setkeyv(subtable, c("rn", countsName))
-          ref.rn <- subtable[rn >= ref & Counts == max.count, min(rn)]
+          ref.rn <- subtable[rn >= ref & get(countsName) == max.count, min(rn)]
           setkey(subtable, rn)
         } else {
           ref.rn <- ref
@@ -1016,7 +1016,7 @@ assessTemporalIndependence <- function(intable,
           max.count <- max(subtable[rn %in% ref:(ref.lim - 1), countsName, with=FALSE])
 
           setkeyv(subtable, c("rn", countsName))
-          ref.rn <- subtable[rn %in% ref:(ref.lim - 1) & Counts == max.count, min(rn)]
+          ref.rn <- subtable[rn %in% ref:(ref.lim - 1) & get(countsName) == max.count, min(rn)]
           setkey(subtable, rn)
           subtable[ref.rn, independent := TRUE]
           ref.time <- subtable[J(ref), DateTimeOriginal]
