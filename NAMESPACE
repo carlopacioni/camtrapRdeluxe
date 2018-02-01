@@ -18,7 +18,8 @@ importFrom("ritis", scientific_name, common_names, taxon_authorship, rank_name, 
 importFrom("parallel", detectCores, makeCluster, clusterExport, stopCluster)
 
 export(activityDensity, activityHistogram, activityOverlap, activityRadial, addCopyrightTag,
-      appendSpeciesNames, cameraOperation, checkSpeciesIdentification, checkSpeciesNames,
+      appendSpeciesNames, assessTemporalIndependence, cameraOperation,
+      checkSpeciesIdentification, checkSpeciesNames,
       createSpeciesFolders, createStationFolders, detectionHistory, detectionMaps, exifTagNames,
 	    exiftoolPath, fixDateTimeOriginal, folderIndices, getSpeciesImages, imageRename,
       recordTable, recordTable.par,
