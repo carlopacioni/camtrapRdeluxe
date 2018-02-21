@@ -1,7 +1,6 @@
-Package: camtrapRnew
+Package: camtrapRdeluxe
 Type: Package
-Title: Camera Trap Data Management and Preparation of Occupancy and
-        Spatial Capture-Recapture Analyses
+Title: A R package that builds on camtrapR to provide more functionalities and flexibility
 Version: 0.99.10.0006
 Date: 2017-10-25
 Authors@R: c(
