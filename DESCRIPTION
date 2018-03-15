@@ -36,4 +36,4 @@ Author: Juergen Niedballa [aut, cre],
 Maintainer: Juergen Niedballa <niedballa@izw-berlin.de>
 Repository: CRAN
 Date/Publication: 2017-10-25 13:04:26 UTC
-
+RoxygenNote: 6.0.1
