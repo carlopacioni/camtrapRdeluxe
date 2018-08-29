@@ -13,15 +13,15 @@
 #'The function can handle a number of different ways of storing images, and
 #'supports sorting/describing of images by moving images into directory folders,
 #'as well as metadata tagging. In every case, images need to be stored into
-#'station directories (i.e.folders). If images are identified by moving them
-#'into species directories, abundance counts directories, etc., a camera
-#'directory is optional (e.g. "Station/Species/XY.JPG" or
+#'station directories (i.e.folders). If images are sorted by moving them into
+#'species directories, abundance counts directories, etc., a camera directory is
+#'optional (e.g. "Station/Species/XY.JPG" or
 #'"Station/Camera/Species/Counts/XY.JPG"). Likewise, if images are identified
 #'using metadata tagging, a camera directory can be used optionally (e.g.
 #'"Station/XY.JPG" or "Station/Camera/XY.JPG").
 #'
 #'The function can read mutliple descriptors, such as species identification,
-#'abundance counts, etc. from the directory structure (e.g.
+#'abundance counts, etc., from the directory structure (e.g.
 #'"Station/Species/XY.JPG" or "Station/Camera/Species/Counts/.../XY.JPG") or
 #'from image metadata tags. For the sake of workflow efficiency, it is suggested
 #'that metadata tagging, using an appropriate image management software, be used
@@ -33,11 +33,20 @@
 #'period, etc.) and after station or species level directories (e.g. species,
 #'abundance, sex, age, behaviour, etc.). However, as mentioned previously, for
 #'efficiency sake it is advised that metadata tagging be used instead of
-#'multiple directories if the need for copying and pasting of images into
+#'multiple directories where the need for copying and pasting of images into
 #'several descriptive folders is increased.
 #'
-#'\code{stationIDposition} \code{speciesPosition} \code{cameraIDposition}
-#'\code{directoryInfoPositions} \code{directoryInfoNames} \code{countsName}
+#'This function allows for multiple directory folders, including abundance, and
+#'enables the determination of relative abundance indices by calculating
+#'independent events using the abundance counts information. The following
+#'arguments allow users to create columns populated with information contained
+#'within directories/folders in the filepath/directory structure above station
+#'level and below species level folders: \code{stationIDposition},
+#'\code{speciesPosition}, \code{cameraIDposition},
+#'\code{directoryInfoPositions}, \code{directoryInfoNames}, \code{countsName}.
+#'
+#'Use the following commands to display the directory folder names and their
+#'level within the filepath: ldir <- list.dirs(dir.in).
 #'
 #'The arguments \code{IDfrom} and \code{cameraID} will present an 'argument
 #'deprecated' warning if used and are only included to allow backwards
@@ -49,11 +58,6 @@
 #'tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in DigiKam
 #'and images tagged in Adobe Bridge / Lightroom with the default settings. It is
 #'only necessary to change it if the default was changed in these programs.
-#'
-#'The function also allows for multiple directory folders, including abundance,
-#'and can calculate independent events using the abundance counts information.
-#'Allows users to create columns referencing folders in directory path above
-#'station level and below species level folders.
 #'
 #'\code{minDeltaTime} is a criterion for temporal independence of species
 #'recorded at the same station. Setting it to 0 will make the function return
@@ -119,9 +123,15 @@
 #'  independent, the second record must be at least \code{minDeltaTime} minutes
 #'  after the last independent record of the same species
 #'  (\code{"lastIndependentRecord"}), or \code{minDeltaTime} minutes after the
-#'  last record (\code{"lastRecord"}).
-#'
-#'  MORE DETAIL REQUIRED!!!
+#'  last record (\code{"lastRecord"}). For example, if a sequence of records of
+#'  the same species from the same station were observed, with a difference in
+#'  time between each record being 0 (first image), 5, 10, 7, 25 and 40 minutes
+#'  and \code{minDeltaTime} defined as 30 minutes,
+#'  \code{"lastIndependentRecord"} would return 3 (0, 25 and 40) independent
+#'  events due to the cumulative calculation of time difference between earlier
+#'  and later records, whereas \code{"lastRecord"} would return 2 (0 and 40)
+#'  independent events because this argument simply uses the time difference
+#'  between successive records.
 #'
 #'@param timeZone character. Must be an argument of
 #'  \code{\link[base]{OlsonNames}}.
@@ -192,14 +202,14 @@
 #'  would be specified as c(3:4, 8)).
 #'
 #'@param directoryInfoNames character. The names of the directories for the
-#'  additional information that are coming from the directory as specified in
+#'  additional information coming from the directory as specified in
 #'  \code{directoryInfoPositions}. If the length is >1, then the names need to
 #'  be concatonated and listed in the same order as the numbers specified in
-#'  \code{directoryInfoPositions}. (e.g. the \code{directoryInfoPositions} of
+#'  \code{directoryInfoPositions} (e.g. the \code{directoryInfoPositions} of
 #'  c(3:4, 8) within the filepath of
 #'  "C:/Documents/CamProject/Site/Transect/Station/Camera/Species/Counts/...",
-#'  would be specified as "Site", "Transect" and "Counts"). This argument must
-#'  be used if the directory filepath contains extra directories beyond species.
+#'  would be specified as c("Site", "Transect","Counts")). This argument must be
+#'  used if the directory filepath contains extra directories beyond species.
 #'
 #'@param countsName character. Vector of the metadata tag name (as per image
 #'  management/tagging software) containing count/abundance information, or the
@@ -210,8 +220,7 @@
 #'  about stations, date, time and (optionally) relative abundance and further
 #'  metadata.
 #'
-
-
+#'@export
 recordTable <- function(inDir,
                         IDfrom,
                         cameraID,
@@ -235,20 +244,17 @@ recordTable <- function(inDir,
                         cameraIDposition = NULL,
                         directoryInfoPositions,
                         directoryInfoNames,
-                        countsName
-)
-{
-  if (!missing(IDfrom)) {
+                        countsName)
+
+{  if (!missing(IDfrom)) {
     warning("argument IDfrom is deprecated; please use speciesIDfrom instead.",
             call. = FALSE)
-    speciesIDfrom = IDfrom
-  }
+    speciesIDfrom = IDfrom}
 
   if (!missing(cameraID)) {
     warning("argument cameraID is deprecated; please use cameraIDfrom instead.",
             call. = FALSE)
-    cameraIDfrom = cameraID
-  }
+    cameraIDfrom = cameraID}
 
   recTable <- recordTableFUN(inDir=inDir,
                              IDfrom=IDfrom,
@@ -274,5 +280,4 @@ recordTable <- function(inDir,
                              directoryInfoNames=directoryInfoNames,
                              countsName=countsName)
 
-  return(recTable)
-  }
+  return(recTable)}
