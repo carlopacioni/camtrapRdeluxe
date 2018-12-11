@@ -1,8 +1,8 @@
 Package: camtrapRdeluxe
 Type: Package
 Title: A R package that builds on camtrapR to provide more functionalities and flexibility
-Version: 0.99.10.0006
-Date: 2017-10-25
+Version: 0.99.10.9999
+Date: 2018-12-11
 Authors@R: c(
         person("Juergen", "Niedballa", email = "niedballa@izw-berlin.de", role = c("aut", "cre")),
         person("Alexandre", "Courtiol", role = "aut"),
@@ -23,7 +23,6 @@ SystemRequirements: ExifTool
 Description: Management of and data extraction from camera trap photographs in wildlife studies. The package provides a workflow for storing and sorting camera trap photographs, computes record databases and detection/non-detection matrices for occupancy and spatial capture-recapture analyses with great flexibility. In addition, it provides simple mapping functions (number of species, number of independent species detections by station) and can visualise activity data.
 License: GPL (>= 2)
 NeedsCompilation: no
-Packaged: 2017-10-25 11:10:37 UTC; J<c3><bc>rgen
 Author: Juergen Niedballa [aut, cre],
   Alexandre Courtiol [aut],
   Rahel Sollmann [aut],
@@ -34,6 +33,4 @@ Author: Juergen Niedballa [aut, cre],
   Andrew Tilker [ctb],
   Andreas Wilting [ctb, ths]
 Maintainer: Juergen Niedballa <niedballa@izw-berlin.de>
-Repository: CRAN
-Date/Publication: 2017-10-25 13:04:26 UTC
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
