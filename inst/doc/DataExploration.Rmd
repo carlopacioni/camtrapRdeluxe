@@ -15,7 +15,7 @@ vignette: >
 ---
 
 ```{r  results = "hide"}
-library(camtrapR)
+library(camtrapRdeluxe)
 ```
 
 # Overview

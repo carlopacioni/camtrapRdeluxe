@@ -5,13 +5,13 @@
 \title{Generate a record table of species detections from camera trap images}
 \usage{
 recordTable(inDir, IDfrom, cameraID, StationIDfrom = "directory",
-  speciesIDfrom, cameraIDfrom, camerasIndependent, exclude, minDeltaTime = 0,
-  deltaTimeComparedTo, timeZone, stationCol, writecsv = FALSE, outDir,
-  metadataHierarchyDelimitor = "|", metadataSpeciesTag,
-  additionalMetadataTags, removeDuplicateRecords = TRUE,
-  stationIDposition = NULL, speciesPosition = NULL,
-  cameraIDposition = NULL, directoryInfoPositions, directoryInfoNames,
-  countsName)
+  speciesIDfrom, cameraIDfrom, camerasIndependent, exclude,
+  minDeltaTime = 0, deltaTimeComparedTo, timeZone, stationCol,
+  writecsv = FALSE, outDir, metadataHierarchyDelimitor = "|",
+  metadataSpeciesTag, additionalMetadataTags,
+  removeDuplicateRecords = TRUE, stationIDposition = NULL,
+  speciesPosition = NULL, cameraIDposition = NULL,
+  directoryInfoPositions, directoryInfoNames, countsName)
 }
 \arguments{
 \item{inDir}{character. Directory filepath containing station directories. It
@@ -188,16 +188,17 @@ efficiency sake it is advised that metadata tagging be used instead of
 multiple directories where the need for copying and pasting of images into
 several descriptive folders is increased.
 
-NEED to describe the circumstances in which these following arguments would be
-used and how to use them!!
+This function allows for multiple directory folders, including abundance, and
+enables the determination of relative abundance indices by calculating
+independent events using the abundance counts information. The following
+arguments allow users to create columns populated with information contained
+within directories/folders in the filepath/directory structure above station
+level and below species level folders: \code{stationIDposition},
+\code{speciesPosition}, \code{cameraIDposition},
+\code{directoryInfoPositions}, \code{directoryInfoNames}, \code{countsName}.
 
 Use the following commands to display the directory folder names and their
-level within the filepath: ldir <- list.dirs(dir.in),
-ldir <- ldir[grepl(pattern = "deer", ldir)], lf <- lapply(ldir, list.files),
-lf_vec <- unlist(lf).
-
-\code{stationIDposition} \code{speciesPosition} \code{cameraIDposition}
-\code{directoryInfoPositions} \code{directoryInfoNames} \code{countsName}
+level within the filepath: ldir <- list.dirs(dir.in).
 
 The arguments \code{IDfrom} and \code{cameraID} will present an 'argument
 deprecated' warning if used and are only included to allow backwards
@@ -209,11 +210,6 @@ specifies the metadata tag group name that contains species identification
 tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in DigiKam
 and images tagged in Adobe Bridge / Lightroom with the default settings. It is
 only necessary to change it if the default was changed in these programs.
-
-The function also allows for multiple directory folders, including abundance,
-and can calculate independent events using the abundance counts information.
-Allows users to create columns referencing folders in directory path above
-station level and below species level folders.
 
 \code{minDeltaTime} is a criterion for temporal independence of species
 recorded at the same station. Setting it to 0 will make the function return

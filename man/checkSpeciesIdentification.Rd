@@ -85,7 +85,7 @@ From version 0.99.0, the function can also handle images identied with metadata 
 
 \examples{
 
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 
 if (Sys.which("exiftool") != ""){        # only run this example if ExifTool is available
 check.folders <- checkSpeciesIdentification(inDir             = wd_images_ID,

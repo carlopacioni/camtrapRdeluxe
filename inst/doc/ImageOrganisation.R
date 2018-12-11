@@ -38,7 +38,7 @@ timeShiftTable
 
 ## ------------------------------------------------------------------------
 # copy sample images to another location (so we don't mess around in the package directory)
-wd_images_raw <- system.file("pictures/raw_images", package = "camtrapR")
+wd_images_raw <- system.file("pictures/raw_images", package = "camtrapRdeluxe")
 file.copy(from = wd_images_raw, to = tempdir() , recursive = TRUE)
 wd_images_raw_copy <- file.path(tempdir(), "raw_images")
 
@@ -67,7 +67,7 @@ timeshift_undo
 
 ## ------------------------------------------------------------------------
  # raw image location
-wd_images_raw <- system.file("pictures/raw_images", package = "camtrapR")      
+wd_images_raw <- system.file("pictures/raw_images", package = "camtrapRdeluxe")      
   # destination for renamed images to be copied to
 wd_images_raw_renamed <- file.path(tempdir(), "raw_images_renamed")       
 
@@ -82,7 +82,7 @@ head(renaming.table2)
 
 ## ------------------------------------------------------------------------
 # copy sample images to temporary directory (so we don't mess around in the package directory)
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 file.copy(from = wd_images_ID, to = tempdir(), recursive = TRUE)
 wd_images_ID_copy <- file.path(tempdir(), "sample_images")
 

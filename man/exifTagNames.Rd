@@ -54,7 +54,7 @@ Juergen Niedballa
 }
 \examples{
 if (Sys.which("exiftool") != ""){        # only run this example if ExifTool is available
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 
 # return tag names only
 exifTagNames(inDir          = wd_images_ID,

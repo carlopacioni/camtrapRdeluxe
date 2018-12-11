@@ -3,7 +3,7 @@ library(camtrapR)
 
 ## ------------------------------------------------------------------------
 # find the directory with sample images contained in the package
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR", lib.loc = .libPaths())
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe", lib.loc = .libPaths())
 
 ## ------------------------------------------------------------------------
 length(list.files(wd_images_ID, pattern = "JPG", recursive = TRUE))
@@ -43,7 +43,7 @@ table(rec.db.species60.exclude$Species)
 
 
 ## ------------------------------------------------------------------------
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 exifTagNames(inDir = wd_images_ID, returnMetadata = FALSE)
 
 ## ------------------------------------------------------------------------
@@ -59,7 +59,7 @@ head(rec.db.species.metadata1)
 
 ## ------------------------------------------------------------------------
 # find the directory with tagged sample images contained in the package
-wd_images_individual_ID <- system.file("pictures/sample_images_tagged/LeopardCat", package = "camtrapR")
+wd_images_individual_ID <- system.file("pictures/sample_images_tagged/LeopardCat", package = "camtrapRdeluxe")
  # missing space in species = "LeopardCat" is because of CRAN package policies
 
  rec.db.pbe <- recordTableIndividual(inDir                  = wd_images_individual_ID,
@@ -127,7 +127,7 @@ camop_no_problem <- cameraOperation(CTtable      = camtraps,
 )
 
 # define image directory
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 
 # make record table
 recordTableSample <- recordTable(inDir               = wd_images_ID,

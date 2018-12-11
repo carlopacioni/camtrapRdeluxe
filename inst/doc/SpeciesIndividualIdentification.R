@@ -62,7 +62,7 @@ SpecFolderCreate2 <- createSpeciesFolders (inDir               = wd_createSpecie
 SpecFolderCreate2
 
 ## ------------------------------------------------------------------------
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 
 # run check with 120 seconds (2 minutes) maximum time differnce
 check.folders <- checkSpeciesIdentification(inDir               = wd_images_ID,
@@ -90,7 +90,7 @@ checkSpeciesIdentification(inDir               = wd_images_ID,
 ## ------------------------------------------------------------------------
 
 # copy sample images to another location (so we don't mess around in the package directory)
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 file.copy(from = wd_images_ID, to = tempdir() , recursive = TRUE)
 wd_images_species_copy <- file.path(tempdir(), "sample_images")
 

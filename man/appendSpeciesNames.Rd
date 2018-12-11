@@ -67,7 +67,7 @@ Juergen Niedballa
 \dontrun{
 
 # copy sample images to another location (so we don't mess around in the package directory)
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 file.copy(from = wd_images_ID, to = getwd(), recursive = TRUE)       
 wd_images_ID_copy <- file.path(getwd(), "sample_images")
 

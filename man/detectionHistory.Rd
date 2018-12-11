@@ -119,7 +119,7 @@ Juergen Niedballa
 \examples{
 
 # define image directory
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 
 # load station information
 data(camtraps)

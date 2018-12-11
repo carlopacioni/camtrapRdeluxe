@@ -67,7 +67,7 @@ Juergen Niedballa
 ### "trial" run. create a table with file names after renaming, but don't copy images.
 
 # first, find sample image directory in package directory:
-wd_images_raw <- system.file("pictures/raw_images", package = "camtrapR")
+wd_images_raw <- system.file("pictures/raw_images", package = "camtrapRdeluxe")
 
 if (Sys.which("exiftool") != ""){        # only run this example if ExifTool is available
 
@@ -86,7 +86,7 @@ renaming.table <- imageRename(inDir               = wd_images_raw,
   # define image directories
 
   # raw image location
-wd_images_raw <- system.file("pictures/raw_images", package = "camtrapR")      
+wd_images_raw <- system.file("pictures/raw_images", package = "camtrapRdeluxe")      
   # destination for renamed images
 wd_images_raw_renamed <- file.path(tempdir(), "raw_images_renamed")       
 
