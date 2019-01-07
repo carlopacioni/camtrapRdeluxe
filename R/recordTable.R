@@ -52,55 +52,53 @@
 #'"C:/Documents/CamProject/Region/Site/Transect/Station/Species/...", the
 #''Station' directory ID position = 6).
 #'
-#'  The arguments \code{IDfrom} and \code{cameraID} will present an 'argument
-#'  deprecated' warning if used and are only included to allow backwards
-#'  compatability for users of the previous iteration of camtrapR. These
-#'  arguments have been replaced by \code{speciesIDfrom} and
-#'  \code{cameraIDfrom}.
+#'The arguments \code{IDfrom} and \code{cameraID} will present an 'argument
+#'deprecated' warning if used and are only included to allow backwards
+#'compatability for users of the previous iteration of camtrapR. These arguments
+#'have been replaced by \code{speciesIDfrom} and \code{cameraIDfrom}.
 #'
-#'  If images are identified by metadata tagging, \code{metadataSpeciesTag}
-#'  specifies the metadata tag group name that contains species identification
-#'  tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in DigiKam
-#'  and images tagged in Adobe Bridge / Lightroom with the default settings. It
-#'  is only necessary to change it if the default was changed in these programs.
+#'If images are identified by metadata tagging, \code{metadataSpeciesTag}
+#'specifies the metadata tag group name that contains species identification
+#'tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in DigiKam
+#'and images tagged in Adobe Bridge / Lightroom with the default settings. It is
+#'only necessary to change it if the default was changed in these programs.
 #'
-#'  \code{minDeltaTime} is a criterion for temporal independence of species
-#'  recorded at the same station. Setting it to 0 will make the function return
-#'  all records. Setting it to a higher value will remove records that were
-#'  taken less than \code{minDeltaTime} minutes after the last record
-#'  (\code{deltaTimeComparedTo = "lastRecord"}) or the last independent record
-#'  (\code{deltaTimeComparedTo = "lastIndependentRecord"}). For two records to
-#'  be considered independent, the second record must be at least
-#'  \code{minDeltaTime} minutes after the last independent record of the same
-#'  species (\code{"lastIndependentRecord"}), or \code{minDeltaTime} minutes
-#'  after the last record (\code{"lastRecord"}). For example, if a sequence of
-#'  records of the same species from the same station were observed, with a
-#'  difference in time between each record being 0 (first image), 5, 10, 7, 25
-#'  and 40 minutes and \code{minDeltaTime} defined as 30 minutes,
-#'  \code{"lastIndependentRecord"} would return 3 (0, 25 and 40) independent
-#'  events due to the cumulative calculation of time difference between earlier
-#'  and later records, whereas \code{"lastRecord"} would return 2 (0 and 40)
-#'  independent events because this argument simply uses the time difference
-#'  between successive records.
+#'\code{minDeltaTime} is a criterion for temporal independence of species
+#'recorded at the same station. Setting it to 0 will make the function return
+#'all records. Setting it to a higher value will remove records that were taken
+#'less than \code{minDeltaTime} minutes after the last record
+#'(\code{deltaTimeComparedTo = "lastRecord"}) or the last independent record
+#'(\code{deltaTimeComparedTo = "lastIndependentRecord"}). For two records to be
+#'considered independent, the second record must be at least \code{minDeltaTime}
+#'minutes after the last independent record of the same species
+#'(\code{"lastIndependentRecord"}), or \code{minDeltaTime} minutes after the
+#'last record (\code{"lastRecord"}). For example, if a sequence of records of
+#'the same species from the same station were observed, with a difference in
+#'time between each record being 0 (first image), 5, 10, 7, 25 and 40 minutes
+#'and \code{minDeltaTime} defined as 30 minutes, \code{"lastIndependentRecord"}
+#'would return 3 (0, 25 and 40) independent events due to the cumulative
+#'calculation of time difference between earlier and later records, whereas
+#'\code{"lastRecord"} would return 2 (0 and 40) independent events because this
+#'argument simply uses the time difference between successive records.
 #'
-#'  \code{camerasIndependent} defines if the cameras at a station are to be
-#'  considered independent. If \code{TRUE}, records of the same species taken by
-#'  different cameras are considered independent (e.g. if they face different
-#'  trails). Use \code{FALSE} if both cameras face each other and possibly
-#'  \code{TRUE} ).
+#'\code{camerasIndependent} defines if the cameras at a station are to be
+#'considered independent. If \code{TRUE}, records of the same species taken by
+#'different cameras are considered independent (e.g. if they face different
+#'trails). Use \code{FALSE} if both cameras face each other and possibly
+#'\code{TRUE} ).
 #'
-#'  \code{exclude} can be used to exclude "species" directories containing
-#'  irrelevant images (e.g. c("team", "blank", "unidentified")).
-#'  \code{stationCol} can be set to match the station column name in the camera
-#'  trap station table (see \code{\link{camtraps}}).
+#'\code{exclude} can be used to exclude "species" directories containing
+#'irrelevant images (e.g. c("team", "blank", "unidentified")). \code{stationCol}
+#'can be set to match the station column name in the camera trap station table
+#'(see \code{\link{camtraps}}).
 #'
-#'  Many digital images contain Exif metadata tags such as "AmbientTemperature"
-#'  or "MoonPhase" that can be extracted if specified in \code{metadataTags}.
-#'  Because these are manufacturer-specific and not standardized, function
-#'  \code{\link{exifTagNames}} provides a vector of all available tag names.
-#'  Multiple names can be specified as a character vector as: \code{c(Tag1,
-#'  Tag2, ...)}. The metadata tags thus extracted may be used as covariates in
-#'  modelling species distributions.
+#'Many digital images contain Exif metadata tags such as "AmbientTemperature" or
+#'"MoonPhase" that can be extracted if specified in \code{metadataTags}. Because
+#'these are manufacturer-specific and not standardized, function
+#'\code{\link{exifTagNames}} provides a vector of all available tag names.
+#'Multiple names can be specified as a character vector as: \code{c(Tag1, Tag2,
+#'...)}. The metadata tags thus extracted may be used as covariates in modelling
+#'species distributions.
 #'
 #'@param inDir character. Directory filepath containing station directories. It
 #'  must either contain images in species subdirectories (e.g.
@@ -172,40 +170,37 @@
 #'  same time.
 #'
 #'@param stationIDposition integer. The numeric position within the
-#'  filepath/directory structure of the station directories. The numeric
-#'  position of the station directories within the filepath/directory structure
-#'  can be determined by using numbers as returned by folderIndices(inDir), or
-#'  by counting the position of the station directory after the name of the
-#'  storage drive within the filepath (e.g.
-#'  "C:/Documents/CamProject/Region/Site/Transect/Station/Species/...", the
-#'  'Station' directory ID position = 6). Only need to use this argument when
-#'  information from one or more directories (i.e. folders) before the 'Station'
-#'  level directory are to be used to populate columns within the record table
-#'  (e.g. "SurveyPeriod/Region/Site/Transect/Station/..."). If this argument is
+#'  filepath/directory structure of the 'Station' directories (e.g.
+#'  "C:/Documents/CamProject/Region/Site/Transect/Station/Camera/Species/...",
+#'  the 'Station' directory position = 6).Only need to use
+#'  this argument when information from one or more directories (i.e. folders)
+#'  before the 'Station' level directory are to be used to populate columns
+#'  within the record table (e.g.
+#'  "SurveyPeriod/Region/Site/Transect/Station/..."). If this argument is
 #'  missing, the function assumes the station directory is next in the filepath
 #'  as specified in \code{inDir}.
 #'
 #'@param speciesPosition integer. The numeric position within the
-#'  filepath/directory structure of the species directories (e.g.
+#'  filepath/directory structure of the 'Species' directories (e.g.
 #'  "C:/Documents/CamProject/Region/Site/Transect/Station/Camera/Species/...",
 #'  the species directory position = 8). Only need to use this argument when
 #'  \code{speciesIDfrom} = "directory" and there are one or more directories
-#'  (i.e. folders) after the species level directory (e.g.
+#'  (i.e. folders) after the 'Species' level directory (e.g.
 #'  "SurveyPeriod/Region/Site/Transect/Station/Species/Counts/...").
 #'
-#'@param cameraIDposition integer. The numeric position of the camera
+#'@param cameraIDposition integer. The numeric position of the 'Camera'
 #'  directories within the filepath/directory structure (e.g.
 #'  "C:/Documents/CamProject/Region/Site/Transect/Station/Camera/Species,...",
 #'  the camera ID directory position = 7). Only need to use this argument when
 #'  \code{cameraIDfrom} = "directory" and there are one or more directories
-#'  (i.e. folders) after the species level directory (e.g.
+#'  (i.e. folders) after the 'Species' level directory (e.g.
 #'  "SurveyPeriod/Region/Site/Transect/Station/Species/Counts/...").
 #'
 #'@param directoryInfoPositions integer. Vector of the numeric positions within
 #'  the filepath/directory structure of the directories containing extra
 #'  information that the user wishes to have itemised in columns within the
 #'  record table. Can take a vector of length >1. This argument must be used if
-#'  the directory filepath contains extra directories beyond species (e.g. the
+#'  the directory filepath contains extra directories beyond 'Species' (e.g. the
 #'  directories "Site", "Transect" and "Counts" within the filepath of
 #'  "C:/Documents/CamProject/Site/Transect/Station/Camera/Species/Counts/...",
 #'  would be specified as c(3:4, 8)).
