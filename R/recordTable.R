@@ -1,11 +1,11 @@
 #'Generate a record table of species detections from camera trap images
 #'
 #'Generates a record table from camera trap images and user defined metadata
-#'tags and/or directory folders, and can also report maximum abundance counts
-#'within independent event intervals.
+#'tags and/or directory folders, or spreadsheet data, and can also report
+#'maximum abundance counts within independent event intervals.
 #'
-#'The recordTable function generates a record table from camera trap images.
-#'Images must be sorted into station directories at least. A station is
+#'The \code{recordTable} function generates a record table from camera trap
+#'images. Images must be sorted into station directories at least. A station is
 #'typically considered the location of a single camera, or the location of
 #'multiple, possibly non-independent, cameras (e.g. two cameras opposite each
 #'other on road).
@@ -46,44 +46,61 @@
 #'\code{directoryInfoPositions}, \code{directoryInfoNames}, \code{countsName}.
 #'
 #'Use the following commands to display the directory folder names and their
-#'level within the filepath: ldir <- list.dirs(dir.in).
+#'level / numeric position within the filepath: ldir <- list.dirs(dir.in), or
+#'folderIndices(inDir), or by counting the position of the desired directory
+#'folder after the name of the storage drive within the filepath (e.g.
+#'"C:/Documents/CamProject/Region/Site/Transect/Station/Species/...", the
+#''Station' directory ID position = 6).
 #'
-#'The arguments \code{IDfrom} and \code{cameraID} will present an 'argument
-#'deprecated' warning if used and are only included to allow backwards
-#'compatability for users of the previous iteration of camtrapR. These arguments
-#'have been replaced by \code{speciesIDfrom} and \code{cameraIDfrom}.
+#'  The arguments \code{IDfrom} and \code{cameraID} will present an 'argument
+#'  deprecated' warning if used and are only included to allow backwards
+#'  compatability for users of the previous iteration of camtrapR. These
+#'  arguments have been replaced by \code{speciesIDfrom} and
+#'  \code{cameraIDfrom}.
 #'
-#'If images are identified by metadata tagging, \code{metadataSpeciesTag}
-#'specifies the metadata tag group name that contains species identification
-#'tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in DigiKam
-#'and images tagged in Adobe Bridge / Lightroom with the default settings. It is
-#'only necessary to change it if the default was changed in these programs.
+#'  If images are identified by metadata tagging, \code{metadataSpeciesTag}
+#'  specifies the metadata tag group name that contains species identification
+#'  tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in DigiKam
+#'  and images tagged in Adobe Bridge / Lightroom with the default settings. It
+#'  is only necessary to change it if the default was changed in these programs.
 #'
-#'\code{minDeltaTime} is a criterion for temporal independence of species
-#'recorded at the same station. Setting it to 0 will make the function return
-#'all records. Setting it to a higher value will remove records that were taken
-#'less than \code{minDeltaTime} minutes after the last record
-#'(\code{deltaTimeComparedTo = "lastRecord"}) or the last independent record
-#'(\code{deltaTimeComparedTo = "lastIndependentRecord"}).
+#'  \code{minDeltaTime} is a criterion for temporal independence of species
+#'  recorded at the same station. Setting it to 0 will make the function return
+#'  all records. Setting it to a higher value will remove records that were
+#'  taken less than \code{minDeltaTime} minutes after the last record
+#'  (\code{deltaTimeComparedTo = "lastRecord"}) or the last independent record
+#'  (\code{deltaTimeComparedTo = "lastIndependentRecord"}). For two records to
+#'  be considered independent, the second record must be at least
+#'  \code{minDeltaTime} minutes after the last independent record of the same
+#'  species (\code{"lastIndependentRecord"}), or \code{minDeltaTime} minutes
+#'  after the last record (\code{"lastRecord"}). For example, if a sequence of
+#'  records of the same species from the same station were observed, with a
+#'  difference in time between each record being 0 (first image), 5, 10, 7, 25
+#'  and 40 minutes and \code{minDeltaTime} defined as 30 minutes,
+#'  \code{"lastIndependentRecord"} would return 3 (0, 25 and 40) independent
+#'  events due to the cumulative calculation of time difference between earlier
+#'  and later records, whereas \code{"lastRecord"} would return 2 (0 and 40)
+#'  independent events because this argument simply uses the time difference
+#'  between successive records.
 #'
-#'\code{camerasIndependent} defines if the cameras at a station are to be
-#'considered independent. If \code{TRUE}, records of the same species taken by
-#'different cameras are considered independent (e.g. if they face different
-#'trails). Use \code{FALSE} if both cameras face each other and possibly
-#'\code{TRUE} ).
+#'  \code{camerasIndependent} defines if the cameras at a station are to be
+#'  considered independent. If \code{TRUE}, records of the same species taken by
+#'  different cameras are considered independent (e.g. if they face different
+#'  trails). Use \code{FALSE} if both cameras face each other and possibly
+#'  \code{TRUE} ).
 #'
-#'\code{exclude} can be used to exclude "species" directories containing
-#'irrelevant images (e.g. c("team", "blank", "unidentified")). \code{stationCol}
-#'can be set to match the station column name in the camera trap station table
-#'(see \code{\link{camtraps}}).
+#'  \code{exclude} can be used to exclude "species" directories containing
+#'  irrelevant images (e.g. c("team", "blank", "unidentified")).
+#'  \code{stationCol} can be set to match the station column name in the camera
+#'  trap station table (see \code{\link{camtraps}}).
 #'
-#'Many digital images contain Exif metadata tags such as "AmbientTemperature" or
-#'"MoonPhase" that can be extracted if specified in \code{metadataTags}. Because
-#'these are manufacturer-specific and not standardized, function
-#'\code{\link{exifTagNames}} provides a vector of all available tag names.
-#'Multiple names can be specified as a character vector as: \code{c(Tag1, Tag2,
-#'...)}. The metadata tags thus extracted may be used as covariates in modelling
-#'species distributions.
+#'  Many digital images contain Exif metadata tags such as "AmbientTemperature"
+#'  or "MoonPhase" that can be extracted if specified in \code{metadataTags}.
+#'  Because these are manufacturer-specific and not standardized, function
+#'  \code{\link{exifTagNames}} provides a vector of all available tag names.
+#'  Multiple names can be specified as a character vector as: \code{c(Tag1,
+#'  Tag2, ...)}. The metadata tags thus extracted may be used as covariates in
+#'  modelling species distributions.
 #'
 #'@param inDir character. Directory filepath containing station directories. It
 #'  must either contain images in species subdirectories (e.g.
@@ -123,15 +140,7 @@
 #'  independent, the second record must be at least \code{minDeltaTime} minutes
 #'  after the last independent record of the same species
 #'  (\code{"lastIndependentRecord"}), or \code{minDeltaTime} minutes after the
-#'  last record (\code{"lastRecord"}). For example, if a sequence of records of
-#'  the same species from the same station were observed, with a difference in
-#'  time between each record being 0 (first image), 5, 10, 7, 25 and 40 minutes
-#'  and \code{minDeltaTime} defined as 30 minutes,
-#'  \code{"lastIndependentRecord"} would return 3 (0, 25 and 40) independent
-#'  events due to the cumulative calculation of time difference between earlier
-#'  and later records, whereas \code{"lastRecord"} would return 2 (0 and 40)
-#'  independent events because this argument simply uses the time difference
-#'  between successive records.
+#'  last record (\code{"lastRecord"}).
 #'
 #'@param timeZone character. Must be an argument of
 #'  \code{\link[base]{OlsonNames}}.
@@ -169,8 +178,8 @@
 #'  by counting the position of the station directory after the name of the
 #'  storage drive within the filepath (e.g.
 #'  "C:/Documents/CamProject/Region/Site/Transect/Station/Species/...", the
-#'  station directory ID position = 6). Only need to use this argument when
-#'  information from one or more directories (i.e. folders) before the station
+#'  'Station' directory ID position = 6). Only need to use this argument when
+#'  information from one or more directories (i.e. folders) before the 'Station'
 #'  level directory are to be used to populate columns within the record table
 #'  (e.g. "SurveyPeriod/Region/Site/Transect/Station/..."). If this argument is
 #'  missing, the function assumes the station directory is next in the filepath
@@ -209,7 +218,7 @@
 #'  c(3:4, 8) within the filepath of
 #'  "C:/Documents/CamProject/Site/Transect/Station/Camera/Species/Counts/...",
 #'  would be specified as c("Site", "Transect","Counts")). This argument must be
-#'  used if the directory filepath contains extra directories beyond species.
+#'  used if the directory filepath contains extra directories beyond 'Species'.
 #'
 #'@param countsName character. Vector of the metadata tag name (as per image
 #'  management/tagging software) containing count/abundance information, or the
@@ -219,6 +228,106 @@
 #'@return A data frame containing species records and additional information
 #'  about stations, date, time and (optionally) relative abundance and further
 #'  metadata.
+#'
+#'@section {Warning }{Custom image metadata must be organised hierarchically
+#'  (tag group - tag; e.g. "Species" - "Leopard Cat"). Detailed information on
+#'  how to set up and use metadata tags can be found in
+#'  \href{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}{vignette
+#'   2: Species and Individual Identification}.
+#'
+#'  Custom image metadata tags must be written to the images. The function
+#'  cannot read tags from .xmp sidecar files. Make sure you set the preferences
+#'  accordingly. In DigiKam, go to Settings/Configure digiKam/Metadata. There,
+#'  make sure "Write to sidecar files" is unchecked.
+#'
+#'  Please note the section about defining argument \code{timeZone} in the
+#'  vignette on data extraction (accessible via
+#'  \code{vignette("DataExtraction")} or online
+#'  (\url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html})).
+#'   }
+#'
+#'@note The results of a number of other functions will depend on the output of
+#'  this function (namely on the arguments exclude for excluding species and
+#'  minDeltaTime/ deltaTimeComparedTo for temporal independence):
+#'
+#'  \tabular{l}{ \code{\link{detectionMaps}} \cr \code{\link{detectionHistory}}
+#'  \cr \code{\link{activityHistogram}} \cr \code{\link{activityDensity}} \cr
+#'  \code{\link{activityRadial}} \cr \code{\link{activityOverlap}} \cr
+#'  \code{\link{activityHistogram}} \cr \code{\link{surveyReport}} \cr }
+#'
+#'@author Juergen Niedbella, Luke Emerson, Carlo Pacioni
+#'
+#'@references Phil Harvey's ExifTool
+#'  http://www.sno.phy.queensu.ca/~phil/exiftool/
+#'
+#'@examples {
+#'wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+#'
+#'if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool is available
+#'
+#'
+#'  rec.db1 <- recordTable(inDir                  = wd_images_ID,
+#'                         IDfrom                 = "directory",
+#'                         minDeltaTime           = 60,
+#'                         deltaTimeComparedTo    = "lastRecord",
+#'                         writecsv               = FALSE,
+#'                         additionalMetadataTags = c("EXIF:Model", "EXIF:Make")
+#'  )
+#'  # note argument additionalMetadataTags: it contains tag names as returned by function exifTagNames
+#'
+#'  rec.db2 <- recordTable(inDir                  = wd_images_ID,
+#'                         IDfrom                 = "directory",
+#'                         minDeltaTime           = 60,
+#'                         deltaTimeComparedTo    = "lastRecord",
+#'                         exclude                = "NO_ID",
+#'                         writecsv               = FALSE,
+#'                         timeZone               = "Asia/Kuala_Lumpur",
+#'                         additionalMetadataTags = c("EXIF:Model", "EXIF:Make", "NonExistingTag")
+#'  )
+#'  # note the warning that the last tag in "additionalMetadataTags" was not found
+#'
+#'
+#'  any(rec.db1$Species == "NO_ID")
+#'  any(rec.db2$Species == "NO_ID")
+#'
+#'
+#'  #############
+#'  # here's how the removeDuplicateRecords argument works
+#'
+#'  \dontrun{   # this is because otherwise the test would run too long to pass CRAN tests
+#'
+#'    rec.db3a <- recordTable(inDir                 = wd_images_ID,
+#'                            IDfrom                 = "directory",
+#'                            minDeltaTime           = 0,
+#'                            exclude                = "NO_ID",
+#'                            timeZone               = "Asia/Kuala_Lumpur",
+#'                            removeDuplicateRecords = FALSE
+#'    )
+#'
+#'    rec.db3b <- recordTable(inDir                 = wd_images_ID,
+#'                            IDfrom                 = "directory",
+#'                            minDeltaTime           = 0,
+#'                            exclude                = "NO_ID",
+#'                            timeZone               = "Asia/Kuala_Lumpur",
+#'                            removeDuplicateRecords = TRUE
+#'    )
+#'
+#'
+#'    anyDuplicated(rec.db3a[, c("Station", "Species", "DateTimeOriginal")])   # got duplicates
+#'    anyDuplicated(rec.db3b[, c("Station", "Species", "DateTimeOriginal")])   # no duplicates
+#'
+#'    # after removing duplicates, both are identical:
+#'    whichAreDuplicated <- which(duplicated(rec.db3a[, c("Station", "Species", "DateTimeOriginal")]))
+#'    all(rec.db3a[-whichAreDuplicated,] == rec.db3b)
+#'
+#'  }
+#'
+#'} else {                                # show function output if ExifTool is not available
+#'  message("ExifTool is not available. Cannot test function")
+#'  data(recordTableSample)
+#'}
+#'
+#'}
 #'
 #'@export
 recordTable <- function(inDir,
