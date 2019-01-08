@@ -75,11 +75,11 @@
 #'CamtrapRdeluxe relies on the free and open-source software ExifTool written by
 #'Phil Harvey to extract metadata from images. See
 #'\url{https://sno.phy.queensu.ca/~phil/exiftool/index.html} for exiftool
-#'download, and
+#'download, and Vignette 1. Organising Raw Camera Trap Images in camtrapR,
+#'accessible via
 #'\url{https://cran.r-project.org/web/packages/camtrapR/vignettes/ImageOrganisation.html#exiftool}
-#'{Vignette 1. Organising raw camera trap images in camtrapR}, or
-#'\code{\link{exiftoolPath}} for instructions on how to install exiftool for
-#'permanent or temporary access.
+#', or \code{\link{exiftoolPath}} for instructions on how to install exiftool
+#'for permanent or temporary access.
 #'
 #'
 #'\code{minDeltaTime} is a criterion for temporal independence of species
@@ -245,21 +245,24 @@
 #'  \code{\link{activityRadial}} \cr \code{\link{activityOverlap}} \cr
 #'  \code{\link{activityHistogram}} \cr \code{\link{surveyReport}} \cr }
 #'
-#'  Custom image metadata must be organised hierarchically (tag group - tag;
-#'  e.g. "Species" - "Leopard Cat"). Detailed information on how to set up and
-#'  use metadata tags can be found in
-#'  \href{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}
-#'  {Vignette 2: Identifying species and individuals in camtrapR}.
+#'  Custom image metadata must be organised hierarchically (i.e. Tag group -
+#'  Tag; e.g. "Species" - "Leopard Cat"). Detailed information on how to set up
+#'  and use metadata tags can be found in Vignette 2: Identifying Species and
+#'  Individuals in camtrapR, accessible via
+#'  \url{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}.
+#'
+#'
 #'
 #'  Custom image metadata tags must be written to the images. The function
 #'  cannot read tags from .xmp sidecar files. Make sure you set the preferences
 #'  accordingly. In digiKam, go to Settings/Configure digiKam/Metadata. There,
 #'  make sure "Write to sidecar files" is unchecked.
 #'
-#'  Please note the section about defining argument \code{timeZone} in the
-#'  vignette on data extraction, accessible via
-#'  \url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}
-#'  Vignette 3. Extracting Data from Camera Trapping Images.
+#'  Please note the section about defining argument \code{timeZone} in Vignette
+#'  3. Extracting Data from Camera Trapping Images, accessible via
+#'  \url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}.
+#'
+#'
 #'
 #'@author Juergen Niedbella, Luke Emerson, Carlo Pacioni
 #'
