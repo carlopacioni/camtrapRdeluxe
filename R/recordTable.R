@@ -76,8 +76,9 @@
 #'Phil Harvey to extract metadata from images. See
 #'\url{https://sno.phy.queensu.ca/~phil/exiftool/index.html} for exiftool
 #'download, and
-#'\url{https://cran.r-project.org/web/packages/camtrapR/vignettes/ImageOrganisation.html}
-#'or \code{\link{exiftoolPath}} for instructions on how to install exiftool for
+#'\url{https://cran.r-project.org/web/packages/camtrapR/vignettes/ImageOrganisation.html#exiftool}{Vignette
+#'1. Organising raw camera trap images in camtrapR} or
+#'\code{\link{exiftoolPath}} for instructions on how to install exiftool for
 #'permanent or temporary access.
 #'
 #'
@@ -234,11 +235,21 @@
 #'  about stations, date, time and (optionally) relative abundance and further
 #'  metadata.
 #'
-#'@section Warning: Custom image metadata must be organised hierarchically (tag
-#'  group - tag; e.g. "Species" - "Leopard Cat"). Detailed information on how to
-#'  set up and use metadata tags can be found in
-#'  \href{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}{vignette
-#'   2: Species and Individual Identification.
+#'@note The results of a number of other functions will depend on the output of
+#'  this function (namely on the arguments: \code{exclude} for excluding
+#'  species, and \code{minDeltaTime} and \code{deltaTimeComparedTo} for temporal
+#'  independence).
+#'
+#'  \tabular{l}{ \code{\link{detectionMaps}} \cr \code{\link{detectionHistory}}
+#'  \cr \code{\link{activityHistogram}} \cr \code{\link{activityDensity}} \cr
+#'  \code{\link{activityRadial}} \cr \code{\link{activityOverlap}} \cr
+#'  \code{\link{activityHistogram}} \cr \code{\link{surveyReport}} \cr }
+#'
+#'  Custom image metadata must be organised hierarchically (tag group - tag;
+#'  e.g. "Species" - "Leopard Cat"). Detailed information on how to set up and
+#'  use metadata tags can be found in
+#'  \href{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}{Vignette
+#'   2: Identifying species and individuals in camtrapR}.
 #'
 #'  Custom image metadata tags must be written to the images. The function
 #'  cannot read tags from .xmp sidecar files. Make sure you set the preferences
@@ -248,18 +259,8 @@
 #'  Please note the section about defining argument \code{timeZone} in the
 #'  vignette on data extraction (accessible via
 #'  \code{vignette("DataExtraction")} or online
-#'  (\url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html})).
-#'   }
-#'
-#'@note The results of a number of other functions will depend on the output of
-#'  this function (namely on the arguments:\code{exclude} for excluding species,
-#'  and \code{minDeltaTime} and \code{deltaTimeComparedTo} for temporal
-#'  independence).
-#'
-#'  \tabular{l}{ \code{\link{detectionMaps}} \cr \code{\link{detectionHistory}}
-#'  \cr \code{\link{activityHistogram}} \cr \code{\link{activityDensity}} \cr
-#'  \code{\link{activityRadial}} \cr \code{\link{activityOverlap}} \cr
-#'  \code{\link{activityHistogram}} \cr \code{\link{surveyReport}} \cr }
+#'  (\url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}{Vignette
+#'   3. Extracting Data from Camera Trapping Images})). }
 #'
 #'@author Juergen Niedbella, Luke Emerson, Carlo Pacioni
 #'
