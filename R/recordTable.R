@@ -257,10 +257,9 @@
 #'  make sure "Write to sidecar files" is unchecked.
 #'
 #'  Please note the section about defining argument \code{timeZone} in the
-#'  vignette on data extraction (accessible via
-#'  \code{vignette("DataExtraction")} or online
-#'  (\url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}
-#'  {Vignette 3. Extracting Data from Camera Trapping Images})).
+#'  vignette on data extraction, accessible via
+#'  \url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}
+#'  Vignette 3. Extracting Data from Camera Trapping Images.
 #'
 #'@author Juergen Niedbella, Luke Emerson, Carlo Pacioni
 #'
