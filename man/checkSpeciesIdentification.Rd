@@ -85,7 +85,7 @@ From version 0.99.0, the function can also handle images identied with metadata 
 
 \examples{
 
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
 
 if (Sys.which("exiftool") != ""){        # only run this example if ExifTool is available
 check.folders <- checkSpeciesIdentification(inDir             = wd_images_ID,
@@ -95,6 +95,7 @@ check.folders <- checkSpeciesIdentification(inDir             = wd_images_ID,
                                             writecsv          = FALSE)
                                      
 check.folders   # In the example, 2 different species were photographed within 2 minutes. 
+}
 
 \dontrun{
 # now exclude one of these 2 species 
@@ -116,7 +117,7 @@ check.folders3 <- checkSpeciesIdentification(inDir             = wd_images_ID,
                                              writecsv          = FALSE)
 check.folders3   # the data frame is empty
 }
-}
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
