@@ -60,9 +60,27 @@
 #'
 #'If images are identified by metadata tagging, \code{metadataSpeciesTag}
 #'specifies the metadata tag group name that contains species identification
-#'tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in digiKam
-#'and images tagged in Adobe Bridge / Lightroom with the default settings. It is
-#'only necessary to change it if the default was changed in these programs.
+#'tags. \code{metadataHierarchyDelimitor} is "|" for images tagged in digiKam,
+#'Adobe Bridge or Adobe Lightroom with the default settings. It is only
+#'necessary to change it if the default was changed in these programs.
+#'
+#'Many digital images contain Exif metadata tags such as "AmbientTemperature" or
+#'"MoonPhase" that can be extracted if specified in \code{metadataTags}. Because
+#'these are manufacturer-specific and not standardized, function
+#'\code{\link{exifTagNames}} provides a vector of all available tag names.
+#'Multiple names can be specified as a character vector as: \code{c(Tag1, Tag2,
+#'...)}. The metadata tags extracted may then be used as covariates in
+#'subsequent analyses.
+#'
+#'CamtrapRdeluxe relies on the free and open-source software ExifTool written by
+#'Phil Harvey to extract metadata from images. See
+#'\url{https://sno.phy.queensu.ca/~phil/exiftool/index.html} for exiftool
+#'download, and Vignette 1. Organising Raw Camera Trap Images in camtrapR,
+#'accessible via
+#'\url{https://cran.r-project.org/web/packages/camtrapR/vignettes/ImageOrganisation.html#exiftool}
+#', or \code{\link{exiftoolPath}} for instructions on how to install exiftool
+#'for permanent or temporary access.
+#'
 #'
 #'\code{minDeltaTime} is a criterion for temporal independence of species
 #'recorded at the same station. Setting it to 0 will make the function return
@@ -93,14 +111,6 @@
 #'irrelevant images (e.g. c("team", "blank", "unidentified")). \code{stationCol}
 #'can be set to match the station column name in the camera trap station table
 #'(see \code{\link{camtraps}}).
-#'
-#'Many digital images contain Exif metadata tags such as "AmbientTemperature" or
-#'"MoonPhase" that can be extracted if specified in \code{metadataTags}. Because
-#'these are manufacturer-specific and not standardized, function
-#'\code{\link{exifTagNames}} provides a vector of all available tag names.
-#'Multiple names can be specified as a character vector as: \code{c(Tag1, Tag2,
-#'...)}. The metadata tags extracted may then be used as covariates in
-#'subsequent analyses.
 #'
 #'@param inDir character. Directory filepath containing 'Station' directories.
 #'  It must either contain images in species subdirectories (e.g.
@@ -225,32 +235,34 @@
 #'  about stations, date, time and (optionally) relative abundance and further
 #'  metadata.
 #'
-#'@section {Warning }{Custom image metadata must be organised hierarchically
-#'  (tag group - tag; e.g. "Species" - "Leopard Cat"). Detailed information on
-#'  how to set up and use metadata tags can be found in
-#'  \href{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}{vignette
-#'   2: Species and Individual Identification}.
-#'
-#'  Custom image metadata tags must be written to the images. The function
-#'  cannot read tags from .xmp sidecar files. Make sure you set the preferences
-#'  accordingly. In digiKam, go to Settings/Configure digiKam/Metadata. There,
-#'  make sure "Write to sidecar files" is unchecked.
-#'
-#'  Please note the section about defining argument \code{timeZone} in the
-#'  vignette on data extraction (accessible via
-#'  \code{vignette("DataExtraction")} or online
-#'  (\url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html})).
-#'   }
-#'
 #'@note The results of a number of other functions will depend on the output of
-#'  this function (namely on the arguments:\code{exclude} for excluding species,
-#'  and \code{minDeltaTime} and \code{deltaTimeComparedTo} for temporal
+#'  this function (namely on the arguments: \code{exclude} for excluding
+#'  species, and \code{minDeltaTime} and \code{deltaTimeComparedTo} for temporal
 #'  independence).
 #'
 #'  \tabular{l}{ \code{\link{detectionMaps}} \cr \code{\link{detectionHistory}}
 #'  \cr \code{\link{activityHistogram}} \cr \code{\link{activityDensity}} \cr
 #'  \code{\link{activityRadial}} \cr \code{\link{activityOverlap}} \cr
 #'  \code{\link{activityHistogram}} \cr \code{\link{surveyReport}} \cr }
+#'
+#'  Custom image metadata must be organised hierarchically (i.e. Tag group -
+#'  Tag; e.g. "Species" - "Leopard Cat"). Detailed information on how to set up
+#'  and use metadata tags can be found in Vignette 2: Identifying Species and
+#'  Individuals in camtrapR, accessible via
+#'  \url{https://CRAN.R-project.org/package=camtrapR/vignettes/SpeciesIndividualIdentification.html#metadata-tagging}.
+#'
+#'
+#'
+#'  Custom image metadata tags must be written to the images. The function
+#'  cannot read tags from .xmp sidecar files. Make sure you set the preferences
+#'  accordingly. In digiKam, go to Settings/Configure digiKam/Metadata. There,
+#'  make sure "Write to sidecar files" is unchecked.
+#'
+#'  Please note the section about defining argument \code{timeZone} in Vignette
+#'  3. Extracting Data from Camera Trapping Images, accessible via
+#'  \url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}.
+#'
+#'
 #'
 #'@author Juergen Niedbella, Luke Emerson, Carlo Pacioni
 #'
