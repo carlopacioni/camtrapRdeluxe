@@ -948,7 +948,20 @@ parseDir <- function(intable, directoryInfoPositions) {
   )
 }
 
-# CP version
+#CP version
+#' Assess temporal independence and generate a record table starting
+#'
+#'from a dataframe ' ' This function is intended for situations where a detection
+#'table has already been generated, for examples a \code{recordTable} ahs been
+#'generated and has been manipolated based on spcific user's need, and there is
+#'the need to assess the
+#'indipendence of the detections
+#'@param intable data.frame. Data frame with detections
+#'@param columnOfInterest Character. Either the name of the species or individual
+#'column ID. The latter to obtain a recordTableIndividual
+#'@param cameraCol Character. The name of the camera column (e.g. "Camera")
+#'@inheritParams recordTable
+#'@export
 assessTemporalIndependence <- function(intable,
                                        deltaTimeComparedTo,
                                        columnOfInterest,     # species/individual column
@@ -1079,6 +1092,8 @@ assessTemporalIndependence <- function(intable,
                  countsName=countsName)
   # keep only independent records
   outtable <- rbindlist(loutTable)
+  outtable[, independent := NULL]
+  outtable[, rn := NULL]
 
   return(outtable)
 }

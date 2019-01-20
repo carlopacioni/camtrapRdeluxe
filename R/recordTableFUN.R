@@ -286,8 +286,8 @@ recordTableFUN <- function( inDir,
   record.table[, delta.time.mins := round(delta.time.secs / 60, digits = 0)]
   record.table[, delta.time.hours := round(delta.time.mins  / 60, digits = 1)]
   record.table[, delta.time.days  := round(delta.time.hours / 24, digits = 1)]
-  record.table[, independent := NULL]
-  record.table[, rn := NULL]
+  # record.table[, independent := NULL]
+  # record.table[, rn := NULL]
 
   # warning if additionalMetadataTags were not found
   if(hasArg(additionalMetadataTags)){
