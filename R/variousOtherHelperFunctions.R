@@ -961,6 +961,7 @@ parseDir <- function(intable, directoryInfoPositions) {
 #'column ID. The latter to obtain a recordTableIndividual
 #'@param cameraCol Character. The name of the camera column (e.g. "Camera")
 #'@inheritParams recordTable
+#'@import data.table
 #'@export
 assessTemporalIndependence <- function(intable,
                                        deltaTimeComparedTo,
@@ -1051,7 +1052,7 @@ assessTemporalIndependence <- function(intable,
   }
   ##############################################################################
 
-
+  if(is.data.table(intable)) setDF(intable)
   # check if all Exif DateTimeOriginal tags were read correctly
   if(any(is.na(intable$DateTimeOriginal))){
     which.tmp <- which(is.na(intable$DateTimeOriginal))
