@@ -23,4 +23,5 @@ export(activityDensity, activityHistogram, activityOverlap, activityRadial, addC
       createSpeciesFolders, createStationFolders, detectionHistory, detectionMaps, exifTagNames,
 	    exiftoolPath, fixDateTimeOriginal, folderIndices, getSpeciesImages, imageRename,
       oneRowOneDetection, recordTable, recordTable.par,
-      recordTableIndividual, spatialDetectionHistory, surveyReport, timeShiftImages)
+      recordTableIndividual, spatialDetectionHistory, surveyReport, timeShiftImages,
+      wide2long)
