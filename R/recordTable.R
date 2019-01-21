@@ -262,8 +262,6 @@
 #'  3. Extracting Data from Camera Trapping Images, accessible via
 #'  \url{https://cran.r-project.org/package=camtrapR/vignettes/DataExtraction.html}.
 #'
-#'
-#'
 #'@author Juergen Niedbella, Luke Emerson, Carlo Pacioni
 #'
 #'@references Phil Harvey's ExifTool
@@ -276,7 +274,7 @@
 #'
 #'
 #'  rec.db1 <- recordTable(inDir                  = wd_images_ID,
-#'                         IDfrom                 = "directory",
+#'                         speciesIDfrom          = "directory",
 #'                         minDeltaTime           = 60,
 #'                         deltaTimeComparedTo    = "lastRecord",
 #'                         writecsv               = FALSE,
@@ -285,7 +283,7 @@
 #'  # note argument additionalMetadataTags: it contains tag names as returned by function exifTagNames
 #'
 #'  rec.db2 <- recordTable(inDir                  = wd_images_ID,
-#'                         IDfrom                 = "directory",
+#'                         speciesIDfrom          = "directory",
 #'                         minDeltaTime           = 60,
 #'                         deltaTimeComparedTo    = "lastRecord",
 #'                         exclude                = "NO_ID",
@@ -305,16 +303,16 @@
 #'
 #'  \dontrun{   # this is because otherwise the test would run too long to pass CRAN tests
 #'
-#'    rec.db3a <- recordTable(inDir                 = wd_images_ID,
-#'                            IDfrom                 = "directory",
+#'    rec.db3a <- recordTable(inDir                  = wd_images_ID,
+#'                            speciesIDfrom          = "directory",
 #'                            minDeltaTime           = 0,
 #'                            exclude                = "NO_ID",
 #'                            timeZone               = "Asia/Kuala_Lumpur",
 #'                            removeDuplicateRecords = FALSE
 #'    )
 #'
-#'    rec.db3b <- recordTable(inDir                 = wd_images_ID,
-#'                            IDfrom                 = "directory",
+#'    rec.db3b <- recordTable(inDir                  = wd_images_ID,
+#'                            speciesIDfrom          = "directory",
 #'                            minDeltaTime           = 0,
 #'                            exclude                = "NO_ID",
 #'                            timeZone               = "Asia/Kuala_Lumpur",
@@ -337,6 +335,11 @@
 #'}
 #'
 #'}
+#'
+#'###### New Examples ########
+#'
+#'
+#'
 #'
 #'@export
 recordTable <- function(inDir,
