@@ -598,7 +598,7 @@ calculateTrappingEffort <- function(cam.op,
 
     index <- 1
     for(m in 1:ncol(effort)){    # for every occasion in the effort matrix
-      # index for columns to aggregate
+      # index for columns in camera operation matrix to aggregate
       if(index + occasionLength2 <= ncol(cam.op)){
         index.tmp <- index : (index + occasionLength2 - 1)
       } else {
@@ -611,8 +611,8 @@ calculateTrappingEffort <- function(cam.op,
       effort[, m] <- ifelse(apply(as.matrix(cam.op[,index.tmp]), MARGIN = 1, FUN = function(X) {sum(is.na(X))}) == length(index.tmp), NA, effort[,m])
       # if full occasion = 0 in cam.op, make effort NA
       effort[, m] <- ifelse(apply(as.matrix(cam.op[,index.tmp]), MARGIN = 1, FUN = function(X) {all(X == 0)}),   NA, effort[,m])
-      # if full occasion is not 1 (i.e. all 0 or NA), set effort NA
-      effort[, m] <- ifelse(apply(as.matrix(cam.op[,index.tmp]), MARGIN = 1, FUN = function(X) {all(X != 1)}),   NA, effort[,m])
+      # if full occasion is smaller than 1 (i.e. all 0 or NA), set effort NA
+      effort[, m] <- ifelse(apply(as.matrix(cam.op[,index.tmp]), MARGIN = 1, FUN = function(X) {all(X < 1)}),   NA, effort[,m])
 
       # set cells in effort matrix NA (according to input arguments)
       # this is later used to adjust the detection/non-detection matrix
@@ -817,7 +817,7 @@ makeSurveyZip <- function(output,
   sink(file = scriptfile, append = TRUE)
   cat("###  camera operation matrix  ### \n\n")
 
-  cat(paste("cameraOperation <- cameraOperation(CTtable = CTtable,
+  cat(paste("camOp <- cameraOperation(CTtable = CTtable,
             stationCol                                  = '", stationCol, "',
             #cameraCol,
             setupCol                                    = '", setupCol, "',
@@ -948,7 +948,21 @@ parseDir <- function(intable, directoryInfoPositions) {
   )
 }
 
-# CP version
+#CP version
+#' Assess temporal independence and generate a record table starting
+#'
+#'from a dataframe ' ' This function is intended for situations where a detection
+#'table has already been generated, for examples a \code{recordTable} ahs been
+#'generated and has been manipolated based on spcific user's need, and there is
+#'the need to assess the
+#'indipendence of the detections
+#'@param intable data.frame. Data frame with detections
+#'@param columnOfInterest Character. Either the name of the species or individual
+#'column ID. The latter to obtain a recordTableIndividual
+#'@param cameraCol Character. The name of the camera column (e.g. "Camera")
+#'@inheritParams recordTable
+#'@import data.table
+#'@export
 assessTemporalIndependence <- function(intable,
                                        deltaTimeComparedTo,
                                        columnOfInterest,     # species/individual column
@@ -1038,7 +1052,7 @@ assessTemporalIndependence <- function(intable,
   }
   ##############################################################################
 
-
+  if(is.data.table(intable)) setDF(intable)
   # check if all Exif DateTimeOriginal tags were read correctly
   if(any(is.na(intable$DateTimeOriginal))){
     which.tmp <- which(is.na(intable$DateTimeOriginal))
@@ -1079,6 +1093,8 @@ assessTemporalIndependence <- function(intable,
                  countsName=countsName)
   # keep only independent records
   outtable <- rbindlist(loutTable)
+  outtable[, independent := NULL]
+  outtable[, rn := NULL]
 
   return(outtable)
 }
