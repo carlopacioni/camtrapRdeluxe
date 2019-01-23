@@ -16,7 +16,8 @@ Authors@R: c(
         )
 Depends: R (>= 3.1.0)
 Imports: methods, rgdal, sp, overlap, secr, taxize, ritis, data.table, parallel
-Suggests: unmarked, knitr, rmarkdown, raster
+Suggests: unmarked, knitr, rmarkdown, raster,
+    testthat
 VignetteBuilder: knitr
 SystemRequirements: ExifTool
         (http://www.sno.phy.queensu.ca/~phil/exiftool/)
