@@ -287,7 +287,7 @@ if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool i
 
 
  rec.db1 <- recordTable(inDir                  = wd_images_ID,
-                        IDfrom                 = "directory",
+                        speciesIDfrom          = "directory",
                         minDeltaTime           = 60,
                         deltaTimeComparedTo    = "lastRecord",
                         writecsv               = FALSE,
@@ -296,7 +296,7 @@ if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool i
  # note argument additionalMetadataTags: it contains tag names as returned by function exifTagNames
 
  rec.db2 <- recordTable(inDir                  = wd_images_ID,
-                        IDfrom                 = "directory",
+                        speciesIDfrom          = "directory",
                         minDeltaTime           = 60,
                         deltaTimeComparedTo    = "lastRecord",
                         exclude                = "NO_ID",
@@ -316,16 +316,16 @@ if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool i
 
  \dontrun{   # this is because otherwise the test would run too long to pass CRAN tests
 
-   rec.db3a <- recordTable(inDir                 = wd_images_ID,
-                           IDfrom                 = "directory",
+   rec.db3a <- recordTable(inDir                  = wd_images_ID,
+                           speciesIDfrom          = "directory",
                            minDeltaTime           = 0,
                            exclude                = "NO_ID",
                            timeZone               = "Asia/Kuala_Lumpur",
                            removeDuplicateRecords = FALSE
    )
 
-   rec.db3b <- recordTable(inDir                 = wd_images_ID,
-                           IDfrom                 = "directory",
+   rec.db3b <- recordTable(inDir                  = wd_images_ID,
+                           speciesIDfrom          = "directory",
                            minDeltaTime           = 0,
                            exclude                = "NO_ID",
                            timeZone               = "Asia/Kuala_Lumpur",
@@ -348,6 +348,11 @@ if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool i
 }
 
 }
+
+###### New Examples ########
+
+
+
 
 }
 \references{
