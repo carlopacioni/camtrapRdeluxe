@@ -268,7 +268,7 @@
 #'  http://www.sno.phy.queensu.ca/~phil/exiftool/
 #'
 #'@examples {
-#'wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR")
+#'wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR"deluxe)
 #'
 #'if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool is available
 #'
