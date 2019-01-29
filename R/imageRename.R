@@ -137,7 +137,9 @@ imageRename <- function(inDir,
     keepCameraSubfolders <- FALSE
    }
    if(hasArg(hasCameraFolders) & hasArg(keepCameraSubfolders)){
-    if(keepCameraSubfolders == TRUE & hasCameraFolders == FALSE){stop("If hasCameraFolders is FALSE, keepCameraSubfolders must be FALSE too", call. = FALSE)}
+    if(keepCameraSubfolders == TRUE & hasCameraFolders == FALSE){
+      stop("If hasCameraFolders is FALSE, keepCameraSubfolders must be FALSE too", call. = FALSE)
+      }
    }
 
 
@@ -147,7 +149,8 @@ imageRename <- function(inDir,
   if(hasArg(outDir)){
     stopifnot(length(outDir) == 1)
     if(isTRUE(all(unlist(strsplit(tolower(inDir), split = file.sep)) %in%
-                  unlist(strsplit(tolower(outDir), split = file.sep))))) stop("outDir may not be identical to or a subdirectory of inDir", call. = FALSE)
+                  unlist(strsplit(tolower(outDir), split = file.sep)))))
+      stop("outDir may not be identical to or a subdirectory of inDir", call. = FALSE)
     }
   if(copyImages == TRUE){
 
