@@ -61,7 +61,6 @@
 #'  successfully.
 #'@references Phil Harvey's ExifTool
 #'  \url{http://www.sno.phy.queensu.ca/~phil/exiftool/ }
-#'  @importFrom R.utils getAbsolutePath
 #'  @export
 #' @examples
 #'
@@ -156,6 +155,10 @@ imageRename <- function(inDir,
 
     if(any(c(grep("/$", inDir) == 1, grep("/$", outDir) == 1))) stop("inDir and outDir may not end with /", call. = FALSE)
 
+    # Ensure all paths use the file.sep
+    inDir <- gsub(pattern = "[\\]", replacement = file.sep, x = inDir)
+    outDir <- gsub(pattern = "[\\]", replacement = file.sep, x = outDir)
+
   } else {
     if(isTRUE(grepl("/$", inDir))) stop("inDir may not end with /", call. = FALSE)
   }
@@ -171,7 +174,6 @@ imageRename <- function(inDir,
     dirs_short <- list.dirs(inDir, full.names = FALSE , recursive = FALSE)
   } else {
     dirs_all <- list.dirs(inDir, full.names = TRUE, recursive = TRUE)
-    #dirs_all <- R.utils::getAbsolutePath(dirs_all)
     l<-strsplit(dirs_all, split = file.sep, fixed = TRUE)
     slength <- sapply(l, length)
     dirs <- dirs_all[slength == stationIDposition]
@@ -226,7 +228,6 @@ imageRename <- function(inDir,
         } else {
           # Identify camera folders if position is passed
           subfolders_all <- list.dirs(dirs[i], full.names = TRUE, recursive = TRUE)
-          #subfolders_all <- R.utils::getAbsolutePath(subfolders_all)
           l<-strsplit(subfolders_all, split = file.sep, fixed = TRUE)
           slength <- sapply(l, length)
           cam_dirs <- subfolders_all[slength == cameraIDposition]
@@ -300,12 +301,15 @@ imageRename <- function(inDir,
       metadata.tmp2$DateTime_for_filename <- time.tmp2
       rm(time.tmp, time.tmp2)
 
-      # create outfilename
+      # create outDir and filename_new
       if(hasArg(outDir)){
-        if(keepCameraSubfolders == TRUE){
-          metadata.tmp2$outDir <- file.path(outDir, metadata.tmp2[,stationCol], metadata.tmp2[,cameraCol])
-        } else {
-          metadata.tmp2$outDir <- file.path(outDir, metadata.tmp2[,stationCol])
+        metadata.tmp2$outDir <- sub(pattern=inDir, replacement=outDir, x=metadata.tmp2$Directory)
+
+        if(keepCameraSubfolders == FALSE){
+          metadata.tmp2$outDir <- mapply(FUN=sub, pattern=metadata.tmp2[, cameraCol],
+                                        x=metadata.tmp2$outDir,
+                                        MoreArgs = list(replacement=""))
+          metadata.tmp2$outDir <- sub(pattern = "//", replacement = "/", x = metadata.tmp2$outDir)
         }
       }
 
@@ -332,31 +336,24 @@ imageRename <- function(inDir,
 
     # create directory structure in outDir
       if(isTRUE(copyImages)){
-          #sapply(unique(copy.info.table$outDir), dir.create, recursive = TRUE)   # old
-
-          if(!isTRUE(keepCameraSubfolders))   dir2create <- file.path (outDir, dirs_short)    # outDir with station subdirectories
-
-          if(isTRUE(keepCameraSubfolders)) {
-            # create list of directories to create
-            dirs_recursive <- lapply(dirs, FUN = list.dirs, recursive = TRUE, full.names = FALSE)
-            names(dirs_recursive) <- dirs_short
-            for(xyz in 1:length(dirs_recursive)){
-              dirs_recursive[[xyz]] <- file.path(names(dirs_recursive)[[xyz]], dirs_recursive[[xyz]])
-            }
-            dirs_recursive <- unlist(dirs_recursive)
-
-            dirs_recursive2 <- dirs_recursive[lapply(strsplit(dirs_recursive, file.sep), length) == 1 |  # find all entries with 1 items (all Stations) and
-                                                           lapply(strsplit(dirs_recursive, file.sep), length) == 2]   # find all entries with 2 items (Station + Camera)
-            dir2create <- file.path (outDir, dirs_recursive2)                                                                         # outDir with station and camera subdirectories
-            }
-
-            #if(isTRUE(createEmptyDirectories)) sapply(file.path(outDir, dirs_short), FUN = dir.create, recursive = TRUE, showWarnings = FALSE)     # create station directories
-            sapply(dir2create, FUN = dir.create, recursive = TRUE, showWarnings = FALSE)           # create directories (recursively)
+        if(isTRUE(createEmptyDirectories)) {
+          dirs_all <- list.dirs(inDir, full.names = TRUE, recursive = TRUE)
+          dir2create <- sub(pattern=inDir, replacement=outDir, x=dirs_all)
+          if(isFALSE(keepCameraSubfolders)) {
+             cams <- unique(copy.info.table[, cameraCol])
+             cams <- paste(cams, collapse = "|")
+             dir2create <- sapply(dir2create, sub, pattern=cams, replacement="")
+             dir2create <- sub(pattern = "//", replacement = "/", x = dir2create)
+          }
+          sapply(unique(dir2create), dir.create, recursive = TRUE, showWarnings = FALSE)
+        } else {
+          sapply(unique(copy.info.table$outDir), dir.create, recursive = TRUE, showWarnings = FALSE)
+          }
         }
 
         # check if renamed images exist already
         if(hasArg(outDir)) {
-          copy.info.table$fileExistsAlready <- file.exists(file.path(copy.info.table$outDir, copy.info.table[,stationCol], copy.info.table$filename_new))
+          copy.info.table$fileExistsAlready <- file.exists(file.path(copy.info.table$outDir, copy.info.table$filename_new))
         } else {
           copy.info.table$fileExistsAlready <- FALSE
         }
