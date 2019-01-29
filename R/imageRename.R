@@ -171,7 +171,7 @@ imageRename <- function(inDir,
     dirs_short <- list.dirs(inDir, full.names = FALSE , recursive = FALSE)
   } else {
     dirs_all <- list.dirs(inDir, full.names = TRUE, recursive = TRUE)
-    dirs_all <- R.utils::getAbsolutePath(dirs_all)
+    #dirs_all <- R.utils::getAbsolutePath(dirs_all)
     l<-strsplit(dirs_all, split = file.sep, fixed = TRUE)
     slength <- sapply(l, length)
     dirs <- dirs_all[slength == stationIDposition]
@@ -225,8 +225,8 @@ imageRename <- function(inDir,
           cam_dirs_short <- list.dirs(dirs[i], full.names = FALSE, recursive = FALSE)
         } else {
           # Identify camera folders if position is passed
-          subfolders_all <- list.dirs(inDir, full.names = TRUE, recursive = TRUE)
-          subfolders_all <- R.utils::getAbsolutePath(subfolders_all)
+          subfolders_all <- list.dirs(dirs[i], full.names = TRUE, recursive = TRUE)
+          #subfolders_all <- R.utils::getAbsolutePath(subfolders_all)
           l<-strsplit(subfolders_all, split = file.sep, fixed = TRUE)
           slength <- sapply(l, length)
           cam_dirs <- subfolders_all[slength == cameraIDposition]
