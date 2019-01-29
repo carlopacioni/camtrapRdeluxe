@@ -60,7 +60,7 @@ if (Sys.which("exiftool") != "") {
   lf <- list.files(file.path(tmp, "test2"), pattern = ".JPG$", recursive = TRUE)
   csv <- list.files(file.path(tmp, "test2"), pattern = ".csv$", recursive = TRUE)
   dirs_copied <- list.dirs(file.path(tmp, "test2"), full.names = TRUE, recursive = TRUE)
-  test_that("imageRename: hasCameraFolders = TRUE, createEmptyDirectories = FALSE", {
+  test_that("imageRename: hasCameraFolders = FALSE, createEmptyDirectories = FALSE", {
     expect_equal(dim(rn.table), c(96, 10))
     expect_false(identical(dirname(lf_orig), dirname(lf)))
     expect_length(grep(pattern = "Station01", rn.table$Station), 3)
@@ -137,7 +137,7 @@ if (Sys.which("exiftool") != "") {
   csv <- list.files(file.path(tmp, "test2"), pattern = ".csv$", recursive = TRUE)
   dirs_copied <- list.dirs(file.path(tmp, "test2"), full.names = TRUE, recursive = TRUE)
 
-  test_that("imageRename: hasCameraFolders = TRUE, createEmptyDirectories = TRUE", {
+  test_that("imageRename: hasCameraFolders = FALSE, createEmptyDirectories = TRUE", {
     expect_equal(dim(rn.table), c(96, 10))
     expect_false(identical(dirname(lf_orig), dirname(lf)))
     expect_length(grep(pattern = "Station01", rn.table$Station), 3)
