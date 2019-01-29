@@ -281,7 +281,7 @@ The results of a number of other functions will depend on the output of
 }
 \examples{
 {
-wd_images_ID <- system.file("pictures/sample_images", package = "camtrapR"deluxe)
+wd_images_ID <- system.file("pictures/sample_images", package = "camtrapRdeluxe")
 
 if (Sys.which("exiftool") != ""){        # only run these examples if ExifTool is available
 
