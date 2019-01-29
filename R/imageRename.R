@@ -61,7 +61,7 @@
 #'  successfully.
 #'@references Phil Harvey's ExifTool
 #'  \url{http://www.sno.phy.queensu.ca/~phil/exiftool/ }
-#'  @export
+#'@export
 #' @examples
 #'
 #' ### "trial" run. create a table with file names after renaming, but don't copy images.
@@ -105,7 +105,7 @@
 #'  list.files(wd_images_raw_renamed, recursive = TRUE)
 #'
 #'}
-#'}
+#'
 imageRename <- function(inDir,
                         outDir,
                         hasCameraFolders,

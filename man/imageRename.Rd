@@ -107,9 +107,52 @@ number of images (>e.g., 100,000), the function may take some time to run.
 \strong{NOTE}: This function assumes that camera folders, if present, are
 within the station folders.
 }
+\examples{
+
+### "trial" run. create a table with file names after renaming, but don't copy images.
+
+# first, find sample image directory in package directory:
+wd_images_raw <- system.file("pictures/raw_images", package = "camtrapRdeluxe")
+
+if (Sys.which("exiftool") != ""){        # only run this example if ExifTool is available
+
+ # because copyImages = FALSE, outDir does not need to be defined
+ renaming.table <- imageRename(inDir               = wd_images_raw,
+                               hasCameraFolders = FALSE,
+                               copyImages          = FALSE,
+                               writecsv            = FALSE
+ )
+} else {
+ message("ExifTool is not available. Cannot test function")
+}
+
+\dontrun{
+
+ # define image directories
+
+ # raw image location
+ wd_images_raw <- system.file("pictures/raw_images", package = "camtrapRdeluxe")
+ # destination for renamed images
+ wd_images_raw_renamed <- file.path(tempdir(), "raw_images_renamed")
+
+
+ if (Sys.which("exiftool") != ""){        # only run this example if ExifTool is available
+
+   # now we have to set outDir because copyImages = TRUE
+   renaming.table2 <- imageRename(inDir               = wd_images_raw,
+                                  outDir              = wd_images_raw_renamed,
+                                  hasCameraFolders    = FALSE,
+                                  copyImages          = TRUE,
+                                  writecsv            = FALSE
+   )
+ }
+
+ list.files(wd_images_raw_renamed, recursive = TRUE)
+
+}
+
+}
 \references{
 Phil Harvey's ExifTool
  \url{http://www.sno.phy.queensu.ca/~phil/exiftool/ }
- @importFrom R.utils getAbsolutePath
- @export
 }
