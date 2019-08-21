@@ -139,10 +139,10 @@ recordTableFUN <- function( inDir,
   record.table.list <- vector("list", length = length(dirs))
 
   if(hasArg(additionalMetadataTags)){
-    command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -EXIF:DateTimeOriginal -HierarchicalSubject', paste(" -",additionalMetadataTags,  collapse = "", sep = ""), ' -ext JPG "', dirs, '"', sep = "")
+    command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -DateTimeOriginal -HierarchicalSubject', paste(" -",additionalMetadataTags,  collapse = "", sep = ""), ' -ext JPG "', dirs, '"', sep = "")
     colnames.tmp <- c("Directory", "FileName", "DateTimeOriginal", "HierarchicalSubject", additionalMetadataTags)
   } else {
-    command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -EXIF:DateTimeOriginal -HierarchicalSubject -ext JPG "',dirs, '"', sep = "")
+    command.tmp  <- paste('exiftool -q -f -t -r -Directory -FileName -DateTimeOriginal -HierarchicalSubject -ext JPG "',dirs, '"', sep = "")
     colnames.tmp <- c("Directory", "FileName", "DateTimeOriginal", "HierarchicalSubject")
   }
 
