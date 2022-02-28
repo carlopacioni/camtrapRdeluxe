@@ -1,3 +1,4 @@
+#' @export
 recordTableIndividual <- function(inDir,
                                   cameraID,
                                   hasStationFolders,
