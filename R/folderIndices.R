@@ -11,11 +11,16 @@
 #' of the folders for the following arguments:  \itemize{ \item
 #' stationIDposition \item speciesPosition \item cameraIDposition }
 #'
+#' If there are multiple paths within \code{inDir} - as it is likely - the
+#' function will look for  the (first) longest and use that as an example.
+#'
 #' @inheritParams recordTable
 #' @export
 folderIndices <- function(inDir) {
   dirs <- list.dirs(inDir, full.names = TRUE,  recursive = TRUE)
-  tmp <- unlist(strsplit(dirs[[1]], split = "/", fixed = TRUE))
+  splitPaths <- strsplit(dirs, split = "/", fixed = TRUE)
+  pathLength <- sapply(splitPaths, length)
+  tmp <- unlist(strsplit(dirs[[which.max(pathLength)]], split = "/", fixed = TRUE))
   names(tmp) <- 1:length(tmp)
   return(tmp)
   }
