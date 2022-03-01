@@ -83,7 +83,7 @@ recordTableFUN <- function( inDir,
 
   if(hasArg(outDir)){
     if(class(outDir) != "character"){stop("outDir must be of class 'character'", call. = FALSE)}
-    if(file.exists(outDir) == FALSE) stop("outDir does not exist", call. = FALSE)
+    if(dir.exists(outDir) == FALSE) stop("outDir does not exist", call. = FALSE)
   }
 
   if(hasArg(exclude)){
