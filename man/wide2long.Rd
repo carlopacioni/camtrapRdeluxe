@@ -36,8 +36,16 @@ there are no additional individuals) if \code{rm.allNA=TRUE} [default]. See the
 first example for this situation.
 }
 \details{
-If there is need to use both wide2long and oneRowOneDetection, the latter
-should be used first.
+There might be situation when both wide2long and oneRowOneDetection need to be
+used. For example, when the metatags describe groups on individuals but the
+desired end point is one row for each individuals. The user has to careful think
+in which order to use these function. See the second example for this situation.
+
+\bold{Note} that when \code{pattern} enconter mutliple coluumns names these are
+grouped in the same order as the are encountered. In the example below,
+"Ind1Species" and "Ind1Sex" are keep together because these are encountered in
+this order, and before "Ind2Species" and "Ind2Sex". \code{data.table::setcolorder}
+can be used to set the order of the columns if needs be [see ?data.table::setcolorder].
 }
 \examples{
 # make up a recordTable where multiple individuals in the same image
@@ -52,7 +60,8 @@ recTest
 wide2long(recTest, pattern = c("Species$", "Sex$"), variableName="Individual",
 valueNames = c("Species", "Sex"))
 
-# Metadata refer to groups of individuals and need to be collated and then
+# In this second examples metadata refer to groups of individuals and need to
+#  be collated and then
 # repeated to have one entry for each detection
 
 # Make up a test recTable
