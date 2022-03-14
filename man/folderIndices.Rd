@@ -27,4 +27,7 @@ their position in the directory path when using \code{recordTable} or
 \code{recordTableIndividual}. This function aims to facilitate the position
 of the folders for the following arguments:  \itemize{ \item
 stationIDposition \item speciesPosition \item cameraIDposition }
+
+If there are multiple paths within \code{inDir} - as it is likely - the
+function will look for  the (first) longest and use that as an example.
 }
