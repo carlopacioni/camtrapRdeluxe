@@ -4,10 +4,17 @@
 \alias{imageRename}
 \title{Copy and rename images based on camera trap station ID and creation date}
 \usage{
-imageRename(inDir, outDir, hasCameraFolders, keepCameraSubfolders,
-  stationIDposition = NULL, cameraIDposition = NULL,
-  createEmptyDirectories = FALSE, copyImages = FALSE,
-  writecsv = FALSE)
+imageRename(
+  inDir,
+  outDir,
+  hasCameraFolders,
+  keepCameraSubfolders,
+  stationIDposition = NULL,
+  cameraIDposition = NULL,
+  createEmptyDirectories = FALSE,
+  copyImages = FALSE,
+  writecsv = FALSE
+)
 }
 \arguments{
 \item{inDir}{character. Directory filepath containing 'Station' directories.

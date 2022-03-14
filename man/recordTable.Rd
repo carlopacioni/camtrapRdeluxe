@@ -4,14 +4,32 @@
 \alias{recordTable}
 \title{Generate a record table of species detections from camera trap images}
 \usage{
-recordTable(inDir, IDfrom, cameraID, StationIDfrom = "directory",
-  speciesIDfrom, cameraIDfrom, camerasIndependent, exclude,
-  minDeltaTime = 0, deltaTimeComparedTo, timeZone, stationCol,
-  writecsv = FALSE, outDir, metadataHierarchyDelimitor = "|",
-  metadataSpeciesTag, additionalMetadataTags,
-  removeDuplicateRecords = TRUE, stationIDposition = NULL,
-  speciesPosition = NULL, cameraIDposition = NULL,
-  directoryInfoPositions, directoryInfoNames, countsName)
+recordTable(
+  inDir,
+  IDfrom,
+  cameraID,
+  StationIDfrom = "directory",
+  speciesIDfrom,
+  cameraIDfrom,
+  camerasIndependent,
+  exclude,
+  minDeltaTime = 0,
+  deltaTimeComparedTo,
+  timeZone,
+  stationCol,
+  writecsv = FALSE,
+  outDir,
+  metadataHierarchyDelimitor = "|",
+  metadataSpeciesTag,
+  additionalMetadataTags,
+  removeDuplicateRecords = TRUE,
+  stationIDposition = NULL,
+  speciesPosition = NULL,
+  cameraIDposition = NULL,
+  directoryInfoPositions,
+  directoryInfoNames,
+  countsName
+)
 }
 \arguments{
 \item{inDir}{character. Directory filepath containing 'Station' directories.
@@ -220,6 +238,7 @@ accessible via
 \url{https://cran.r-project.org/web/packages/camtrapR/vignettes/ImageOrganisation.html#exiftool}
 , or \code{\link{exiftoolPath}} for instructions on how to install exiftool
 for permanent or temporary access.
+
 
 \code{minDeltaTime} is a criterion for temporal independence of species
 recorded at the same station. Setting it to 0 will make the function return

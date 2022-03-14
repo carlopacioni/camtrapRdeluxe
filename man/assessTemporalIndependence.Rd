@@ -4,8 +4,16 @@
 \alias{assessTemporalIndependence}
 \title{Assess temporal independence and generate a record table starting}
 \usage{
-assessTemporalIndependence(intable, deltaTimeComparedTo, columnOfInterest,
-  cameraCol, camerasIndependent, stationCol, minDeltaTime, countsName)
+assessTemporalIndependence(
+  intable,
+  deltaTimeComparedTo,
+  columnOfInterest,
+  cameraCol,
+  camerasIndependent,
+  stationCol,
+  minDeltaTime,
+  countsName
+)
 }
 \arguments{
 \item{intable}{data.frame. Data frame with detections}
