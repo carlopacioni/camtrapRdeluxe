@@ -10,7 +10,7 @@ oneRowOneDetection(intable, countsName)
 record table (data.table)
 }
 \description{
-If a record table has a count column, this functon expand the record table to
+If a record table has a count column, this function expand the record table to
 have a row for each detection based on the count column.
 }
 \details{
@@ -19,13 +19,16 @@ recortable that are more than 1E4, so be patient!
 }
 \examples{
 # create a test recordTable
-nc<-12
-nr<-1E4
-m <- matrix(sample(1:100, replace = T, size = nr*nc), ncol = nc)
-recTabTest <- data.table(m)
-recTabTest[, Count:=sample(1:3, replace = T, size = nr)]
-
-system.time(
-  test<-oneRowOneDetection(intable=recTabTest, countsName="Count")
+# Make up a test recTable
+recTest <- data.table(fileName=LETTERS[1:5],
+Group1Count=c(rep(2,4), 1), # The count of individuals in the first group (G1)
+Group1Species= c(rep("sambar", 4), "Fallow"), # The species of G1
+Group1Sex=sample(c("Male", "Female", NA), 5, replace = T) # The sex of G1
 )
+recTest
+
+# Replicate rows
+OROD <- oneRowOneDetection(W2L, countsName = "Group1Count")
+OROD
+
 }
