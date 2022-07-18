@@ -1113,5 +1113,11 @@ assessTemporalIndependence <- function(intable,
   outtable[, independent := NULL]
   outtable[, rn := NULL]
 
+  # compute delta time in hours and days
+  outtable[, delta.time.secs := as.numeric(round(delta.time.secs, digits = 0))]
+  outtable[, delta.time.mins := round(delta.time.secs / 60, digits = 0)]
+  outtable[, delta.time.hours := round(delta.time.mins  / 60, digits = 1)]
+  outtable[, delta.time.days  := round(delta.time.hours / 24, digits = 1)]
+
   return(outtable)
 }
