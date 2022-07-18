@@ -949,14 +949,15 @@ parseDir <- function(intable, directoryInfoPositions) {
 }
 
 #CP version
-#' Assess temporal independence and generate a record table starting
+#' Assess temporal independence and generate a record table
 #'
-#'from a dataframe ' ' This function is intended for situations where a detection
-#'table has already been generated, for examples a \code{recordTable} ahs been
-#'generated and has been manipolated based on spcific user's need, and there is
-#'the need to assess the
-#'indipendence of the detections
-#'@param intable data.frame. Data frame with detections
+#' This function is intended for situations where a detection
+#'table has already been generated, for examples a \code{recordTable} has been
+#'generated and has been manipulated based on specific user's need, and there is
+#'the need to assess the independence of the detections.
+#'
+#'@param intable data.frame or data.table. A data frame or a data.table with the
+#' detections (e.g. the output from recordTable)
 #'@param columnOfInterest Character. Either the name of the species or individual
 #'column ID. The latter to obtain a recordTableIndividual
 #'@param cameraCol Character. The name of the camera column (e.g. "Camera")
