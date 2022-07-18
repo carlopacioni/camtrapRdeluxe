@@ -1054,6 +1054,7 @@ assessTemporalIndependence <- function(intable,
   ##############################################################################
 
   if(is.data.table(intable)) setDF(intable)
+
   # check if all Exif DateTimeOriginal tags were read correctly
   if(any(is.na(intable$DateTimeOriginal))){
     which.tmp <- which(is.na(intable$DateTimeOriginal))
@@ -1066,6 +1067,14 @@ assessTemporalIndependence <- function(intable,
   }
 
   intable[, stationCol] <- as.character.Date(intable[, stationCol])
+
+  # Ensure that the table is sorted correctly (sort by station, (camera), species or individualID and time)
+    if(camerasIndependent == TRUE) {
+      intable <- intable[order(intable[, stationCol], intable[, columnOfInterest], intable[, cameraCol], intable$DateTimeOriginal),]
+    } else {
+      intable <- intable[order(intable[, stationCol], intable[, columnOfInterest], intable$DateTimeOriginal),]
+    }
+
   # prepare to add time difference between observations columns
   intable.dt <- data.table(intable)
 
