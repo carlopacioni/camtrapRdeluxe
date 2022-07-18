@@ -1058,10 +1058,17 @@ assessTemporalIndependence <- function(intable,
   # check if all Exif DateTimeOriginal tags were read correctly
   if(any(is.na(intable$DateTimeOriginal))){
     which.tmp <- which(is.na(intable$DateTimeOriginal))
-    if(length(which.tmp) == nrow(intable)) stop("Could not read any Exif DateTimeOriginal tag at station: ", paste(unique(intable[which.tmp, stationCol])), " Consider checking for corrupted Exif metadata.")
-    warning(paste("Could not read Exif DateTimeOriginal tag of", length(which.tmp),"image(s) at station", paste(unique(intable[which.tmp, stationCol]), collapse = ", "), ". Will omit them. Consider checking for corrupted Exif metadata. \n",
+    if(length(which.tmp) == nrow(intable))
+      stop("Could not read any Exif DateTimeOriginal tag at station: ",
+           paste(unique(intable[which.tmp, stationCol])),
+           " Consider checking for corrupted Exif metadata.")
+    warning(paste("Could not read Exif DateTimeOriginal tag of", length(which.tmp),
+                  "image(s) at station",
+                  paste(unique(intable[which.tmp, stationCol]), collapse = ", "),
+                  ". Will omit them. Consider checking for corrupted Exif metadata. \n",
                   paste(file.path(intable[which.tmp, "Directory"],
-                                  intable[which.tmp, "FileName"]), collapse = "\n")), call. = FALSE, immediate. = TRUE)
+                                  intable[which.tmp, "FileName"]), collapse = "\n")),
+            call. = FALSE, immediate. = TRUE)
     intable <- intable[-which.tmp ,]
     rm(which.tmp)
   }
