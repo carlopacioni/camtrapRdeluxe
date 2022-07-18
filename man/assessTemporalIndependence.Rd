@@ -2,7 +2,7 @@
 % Please edit documentation in R/variousOtherHelperFunctions.R
 \name{assessTemporalIndependence}
 \alias{assessTemporalIndependence}
-\title{Assess temporal independence and generate a record table starting}
+\title{Assess temporal independence and generate a record table}
 \usage{
 assessTemporalIndependence(
   intable,
@@ -16,7 +16,8 @@ assessTemporalIndependence(
 )
 }
 \arguments{
-\item{intable}{data.frame. Data frame with detections}
+\item{intable}{data.frame or data.table. A data frame or a data.table with the
+detections (e.g. the output from recordTable)}
 
 \item{deltaTimeComparedTo}{character. For two records to be considered
 independent, the second record must be at least \code{minDeltaTime} minutes
@@ -45,9 +46,8 @@ vector of the name given to the count/abundance folder position within
 \code{directoryInfoNames} (e.g. "Counts").}
 }
 \description{
-from a dataframe ' ' This function is intended for situations where a detection
-table has already been generated, for examples a \code{recordTable} ahs been
-generated and has been manipolated based on spcific user's need, and there is
-the need to assess the
-indipendence of the detections
+This function is intended for situations where a detection
+table has already been generated, for examples a \code{recordTable} has been
+generated and has been manipulated based on specific user's need, and there is
+the need to assess the independence of the detections.
 }
