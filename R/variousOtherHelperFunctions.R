@@ -1073,7 +1073,7 @@ assessTemporalIndependence <- function(intable,
     rm(which.tmp)
   }
 
-  intable[, stationCol] <- as.character.Date(intable[, stationCol])
+  intable[, stationCol] <- as.character(intable[, stationCol])
 
   # Ensure that the table is sorted correctly (sort by station, (camera), species or individualID and time)
     if(camerasIndependent == TRUE) {
