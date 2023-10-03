@@ -47,8 +47,8 @@
 #'\code{directoryInfoPositions}, \code{directoryInfoNames}, \code{countsName}.
 #'
 #'Use the following commands to display the directory folder names and their
-#'level / numeric position within the filepath: ldir <- list.dirs(dir.in), or
-#'folderIndices(inDir), or by counting the position of the desired directory
+#'level / numeric position within the filepath: \code{ldir <- list.dirs(dir.in)}
+#', or \code{folderIndices(inDir)}, or by counting the position of the desired directory
 #'folder after the name of the storage drive within the filepath (e.g.
 #'"C:/Documents/CamProject/Region/Site/Transect/Station/Species/...", the
 #''Station' directory ID position = 6).
