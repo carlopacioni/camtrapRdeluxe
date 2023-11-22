@@ -13,9 +13,9 @@ checkSpeciesNames <- function(speciesNames,
   file.sep <- .Platform$file.sep
 
   # query ITIS TSN (taxnonomic serial number)
-  tsns <- get_tsn(searchterm = speciesNames,
+  tsns <- get_tsn(sci_com = speciesNames,
                   searchtype = searchtype,
-                  verbose    = FALSE,
+                  messages    = FALSE,
                   accepted   = accepted,
                   ask        = ask)
 
