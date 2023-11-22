@@ -1053,6 +1053,9 @@ assessTemporalIndependence <- function(intable,
   }
   ##############################################################################
 
+  if(hasArg(stationCol) == FALSE) stationCol <- "Station"
+  stopifnot(is.character(stationCol))
+
   if(is.data.table(intable)) setDF(intable)
 
   # check if all Exif DateTimeOriginal tags were read correctly
